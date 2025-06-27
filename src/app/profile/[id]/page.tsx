@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Pagination } from "@/app/components/Pagination";
 import GuaranteeSection from "@/app/components/profile/GuaranteeSection";
 import Footer from "@/app/components/Footer";
+import AuthGuard from "@/components/AuthGuard";
 import { DropdownSelector } from "@/app/components/DropdownSelector";
 import { SortDropdown } from "@/app/components/SortDropdown";
 import { RelatedWorkCard } from "@/app/components/profile/RelatedWorkCard";
@@ -176,7 +177,8 @@ export default function ProfilePage() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-full">
+    <AuthGuard>
+      <div className="w-full">
       {/* 上部～Contact までは白背景 */}
       <div className="bg-white py-4 px-8 lg:px-12">
         {/* 戻るボタンとホームボタン */}
@@ -480,7 +482,8 @@ export default function ProfilePage() {
         {showGuarantee && <GuaranteeSection creator={profile?.creator} relatedWorks={internalRelatedWorks} show={showGuarantee} />}
       </div>
       <Footer />
-    </div>
+      </div>
+    </AuthGuard>
   );
 }
 

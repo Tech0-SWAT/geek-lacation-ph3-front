@@ -1,6 +1,8 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useSession } from "next-auth/react"
+import LoginButton from "../../components/auth/LoginButton"
+import UserMenu from "../../components/auth/UserMenu"
 
 export default function Navbar() {
   const { data: session } = useSession()
@@ -24,26 +26,16 @@ export default function Navbar() {
         />
       </div>
 
-      {/* 右側：サインイン／サインアウト と 3点メニュー */}
+      {/* 右側：サインイン／サインアウト と ユーザーメニュー */}
       <div className="flex items-center space-x-6">
-        {/* 既存のサインイン／サインアウト部分 */}
+        {/* Auth0 ログインボタン */}
         {session ? (
-          <a href="/api/auth/signout" className="block">
-            <div className="bg-green-500 text-white px-6 py-2 rounded-full font-bold hover:bg-green-700 cursor-pointer">
-              <span>{session.user?.name}</span>
-              {" | Sign out"}
-            </div>
-          </a>
+          <UserMenu />
         ) : (
-          <div className="flex items-center space-x-4">
-          {/* <span className="text-sm text-gray-600">未signin：表示数3 |</span> */}
-          <a
-            href="/api/auth/signin"
-            className="bg-green-500 text-white px-6 py-2 rounded-full font-bold hover:bg-green-700 cursor-pointer"
-          >
-              Sign in
-            </a>
-          </div>
+          <LoginButton 
+            variant="primary" 
+            className="bg-green-500 text-white px-6 py-2 rounded-full font-bold hover:bg-green-700"
+          />
         )}
 
         {/* 3点メニューアイコン（縦に3つの点） */}
