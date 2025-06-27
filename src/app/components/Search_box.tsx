@@ -91,8 +91,55 @@ export default function Search({ onSearch }: SearchProps) {
 
   return (
     <div className="container mx-auto flex flex-col items-center">
+      <div className="w-full md:w-3/4 lg:w-3/4 px-10 flex items-center justify-start space-x-4 mb-4">
+        <span
+          className="text-gray-500 cursor-not-allowed select-none"
+          title="準備中です"
+        >
+          スタッフ
+        </span>
+
+        <span className="bg-[#FFEBBB] text-black px-5 py-2 rounded-full font-medium">
+          ロケ地
+        </span>
+
+        <span
+          className="text-gray-500 cursor-not-allowed select-none"
+          title="準備中です"
+        >
+          作品
+        </span>
+      </div>
+
       <div className="w-full md:w-3/4 lg:w-3/4 px-4">
-        <form onSubmit={handleSubmit} className="w-full mx-auto flex items-center bg-white rounded-full shadow-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="relative w-full mx-auto bg-white rounded-full shadow-lg"
+      >
+        {/* 検索アイコン */}
+        <button
+          type="submit"
+          className="absolute left-4 top-1/2 -translate-y-1/2 focus:outline-none"
+        >
+          <FaSearch className="text-gray-600" />
+        </button>
+
+        {/* テキスト入力 */}
+        <input
+          type="text"
+          name="keyword"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="フリーワード検索"
+          className="w-full py-4 pl-12 text-gray-800 bg-transparent rounded-full focus:outline-none"
+        />
+
+        {/* フォトアイコン */}
+        <span className="material-icons absolute right-8 top-1/2 -translate-y-1/2 text-2xl">
+          insert_photo
+        </span>
+      </form>
+        {/* <form onSubmit={handleSubmit} className="w-full mx-auto flex items-center bg-white rounded-full shadow-lg">
           <button
             type="submit"
             className="bg-white p-2 rounded-full focus:outline-none transition-colors flex items-center justify-center"
@@ -107,7 +154,10 @@ export default function Search({ onSearch }: SearchProps) {
             placeholder="フリーワード検索"
             className="flex-grow rounded-r-full pl-4 py-4 text-gray-800 bg-white focus:outline-none"
           />
-        </form>
+          <span className="material-icons ml-3">
+            insert_photo
+          </span>
+        </form> */}
       </div>
       <div className="w-full md:w-3/4 lg:w-3/4 px-4 mt-[45px]">
         <Middlebar onTagsChange={handleTagsChange} onClearAllRequest={handleClearAllRequest}/>
