@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log("受け取ったデータ:", body);
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     const endpointURL = `${apiBaseUrl}/api/locations/ai-search`;
 
     const params = new URLSearchParams();
