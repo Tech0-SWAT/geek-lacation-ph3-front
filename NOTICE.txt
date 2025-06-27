@@ -1,0 +1,10 @@
+This project includes third-party icon libraries distributed under various open source licenses.
+
+---
+
+Font Awesome (react-icons/fa)
+Copyright (c) Fonticons, Inc.
+Licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+---

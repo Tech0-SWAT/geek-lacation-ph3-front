@@ -1,0 +1,19 @@
+export const mediaList = [
+  "CM",
+  "MV",
+  "CINEMA",
+  "PROGRAM",
+  "ANIME",
+  "WebMovie",
+  "DIRECTION",
+  "GRAPHIC",
+  "WebSite",
+  "RealEvent",
+  "ONLINE",
+  "Character",
+  "ART",
+  "WebComic",
+  "AWAED",
+  "SNS",
+  "OTHER"
+];

@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-slide-in {
+    animation: slideIn 0.5s ease forwards;
+  }
+
+  @keyframes slideIn {
+    0% {
+      opacity: 0.5;
+      transform: translateX(-10%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0%);
+    }
+  }
+}
+
+
+body {
+    color: black;
+    /* background-color: whitesmoke; */
+    background-color: white;
+    background-size: cover;
+    background-position-y: 170%;
+    background-attachment: fixed;
+    position: relative;
+}
+
+/* スクロールバーを透明にする（Webkit系ブラウザ向け） */
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.4); /* 好みに調整 */
+  border-radius: 4px;
+}
+
+/* Firefox対応 */
+.custom-scroll {
+  scrollbar-color: rgba(100, 100, 100, 0.4) transparent;
+}
