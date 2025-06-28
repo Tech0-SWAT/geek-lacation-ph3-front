@@ -8,7 +8,7 @@ import Footer from "@/app/components/Footer";
 import { DropdownSelector } from "@/app/components/DropdownSelector";
 import { SortDropdown } from "@/app/components/SortDropdown";
 import { RelatedWorkCard } from "@/app/components/profile/RelatedWorkCard";
-import { StaffCard } from "@/app/components/StaffCard";
+import { StaffCard } from "@/app/components/LocationCard";
 import { occupationList } from "@/data/occupationData";
 import { ProfileView } from "@/app/components/profile/ProfileView";
 import { BackHomeButtons } from "@/app/components/BackHomeButtons";

@@ -1,6 +1,6 @@
 import React from "react";
 import { RelatedWorkCard } from "@/app/components/profile/RelatedWorkCard";
-import { StaffCard } from "@/app/components/StaffCard";
+import { StaffCard } from "@/app/components/LocationCard";
 
 export const RelatedSectionEditView = () => {
   const dummyList = Array(4).fill(0);
