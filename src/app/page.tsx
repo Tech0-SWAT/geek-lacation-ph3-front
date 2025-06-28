@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react'
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthGuard from '../components/AuthGuard';
+import LocationCard from './components/LocationCard';
 
 const test_query = {
   "oid": "sample-org-002",
@@ -56,6 +57,17 @@ export default function Home() {
       setIsInitialDataFetched(true);
     }
   }, [isInitialDataFetched]);
+
+    // 初期データが取得できていて、まだ表示データが空のときに反映する
+    useEffect(() => {
+      if (
+        Array.isArray(initialFetchData) &&
+        initialFetchData.length > 0 &&
+        displayData.length === 0
+      ) {
+        setDisplayData(initialFetchData);
+      }
+    }, [initialFetchData, displayData]);
 
   // //ログイン導入時
   // useEffect(() => {
@@ -132,18 +144,12 @@ export default function Home() {
   
       if (data.results) {
         const newArray = data.results.map((item: any) => ({
-          creator_id: item.creator_id,
-          creator_name: item.creator_name,
-          file_name: item.file_name,
-          latest_product_number: item.latest_product_number,
-          latest_product_title: item.latest_product_title,
-          latest_product_image_path: item.latest_product_image_path,
-          latest_inquiry_email: item.latest_inquiry_email,
-          latest_inquiry_phone: item.latest_inquiry_phone,
-          occupations: item.occupations,
-          company_name: item.company_name,
-          name_furigana: item.creator_name_furinaga,
-          gender: item.gender,
+          name: item.name,
+          address: item.address,
+          tel: item.tel,
+          mail: item.mail,
+          categories: item.categories ?? [],
+          images: item.images ?? [], 
         }));
         setDisplayData(newArray);
       } else {
@@ -157,7 +163,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    if (initialFetchData && initialFetchData.length > 0 && displayData.length === 0) {
+    if (initialFetchData && Array.isArray(initialFetchData) && initialFetchData.length > 0 && displayData.length === 0) {
       setDisplayData(initialFetchData);
     }
   }, [initialFetchData]);

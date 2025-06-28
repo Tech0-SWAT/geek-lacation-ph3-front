@@ -1,8 +1,29 @@
 // DisplayCards.tsx
 import { useState } from "react";
+import LocationCard from "./LocationCard";
 import { BusinessCard } from "./businesscard/BusinessCard";
 import { dummyData } from "@/data/dummyData"; // エイリアス設定に合わせてパスを調整
 import { Pagination } from "./Pagination";
+
+type ImageType = {
+  url: string;
+  type: string;
+  caption?: string | null;
+};
+
+type LocationItem = {
+  name: string;
+  address: string;
+  tel?: string;
+  mail?: string;
+  categories: string[];
+  images: ImageType[];
+};
+
+type Props = {
+  images: LocationItem[];
+};
+
 import { Sidebar } from "./Sidebar";
 
 interface DisplayCardsProps {
@@ -55,29 +76,22 @@ export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar }:
         {/* カードエリア */}
         <div className="flex-1 lg:ml-6">
           <div className="max-w-7xl mx-auto p-4">
-            <p className="mb-[100px] text-[36px] font-semibold text-left m-0">
-              該当者：{totalItems}名
+            <p className="mb-[100px] text-[36px] font-semibold text-left m-0 flex items-center gap-4">
+            <span>Location List</span>
+            <span className="bg-black text-white px-4 py-1 rounded-full text-2xl">{totalItems}件</span>
             </p>
             <div className="grid gap-8 justify-center [grid-template-columns:repeat(auto-fit,360px)]">
-              {/* imageは本来file_nameだが一旦仮置き,work={data.product_image_path}も */}
-              {currentItems.map((data:any, index:any) => (
-                <BusinessCard
-                  key={index}
-                   name={data.name || data.creator_name}
-                  furigana={data.name_furigana}
-                   uuid={data.creator_id}
-                   image={data.file_name}
-                  personInfo={data.personInfo}
-                   tags={data.occupations}
-                   date={data.product_number || data.latest_product_number}
-                  fileType={data.fileType}
-                   title={data.product_title || data.latest_product_title}
-                   work={data.latest_product_number || data.product_number }
-                   company={data.company_name}
-                   inquiry_email={data.inquiry_email || data.latest_inquiry_email}
-                   inquiry_phone={data.inquiry_phone || data.latest_inquiry_phone}
-                />
-              ))}
+              {currentItems.map((data, index) => (
+              <LocationCard
+                key={index}
+                name={data.name}
+                address={data.address}
+                tel={data.tel}
+                mail={data.mail}
+                categories={data.categories ?? []}
+                images={data.images ?? []}
+              />
+            ))}
             </div>
             <div className="flex justify-center">
               <Pagination
