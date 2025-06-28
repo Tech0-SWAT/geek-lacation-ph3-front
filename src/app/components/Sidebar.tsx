@@ -1,5 +1,7 @@
 import React from 'react';
 import SidebarToggleIcon from './icon/SidebarToggleIcon';
+import { useFilter } from '@/app/context/FilterContext';
+
 
 interface SidebarProps {
   isOpen: boolean;
@@ -7,8 +9,54 @@ interface SidebarProps {
   // className?: string;
 }
 
+const equipmentList = [
+  "ゼネ車",
+  "キッチン",
+  "同録",
+  "養生",
+  "電源",
+  "駐車場",
+  "特機",
+  "スモーク使用",
+  "火器使用",
+];
+
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+  const { filters, setFilters, resetFilters } = useFilter();
+
+  const toggleEquipment = (eq: string) => {
+    setFilters(prev => ({
+      ...prev,
+      equipment: prev.equipment.includes(eq)
+        ? prev.equipment.filter(e => e !== eq)
+        : [...prev.equipment, eq],
+    }));
+  };
+
+
+
+  const toggleCategory = (cat: string) => {
+    setFilters(prev => ({
+      ...prev,
+      categories: prev.categories.includes(cat)
+        ? prev.categories.filter(c => c !== cat)
+        : [...prev.categories, cat],
+    }));
+  };
+
+  const togglePlace = (place: string) => {
+    setFilters(prev => ({
+      ...prev,
+      places: prev.places.includes(place)
+        ? prev.places.filter(p => p !== place)
+        : [...prev.places, place],
+    }));
+  };
+
+  const selectPrice = (price: string) => {
+    setFilters(prev => ({ ...prev, price }));
+  };
 
   return (
     <>
@@ -44,66 +92,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
             フィルター
           </h3>
+
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">
+              設備
+            </h4>
+            <div className="space-y-2">
+              {equipmentList.map(eq => (
+                <label key={eq} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={filters.equipment.includes(eq)}
+                    onChange={() => toggleEquipment(eq)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-600">{eq}</span>
+                </label>
+              ))}
+            </div>
+          </div>
           
           <div className="space-y-6">
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-3">
-                カテゴリ
-              </h4>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">デザイナー</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">エンジニア</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">プロデューサー</span>
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-3">
-                場所
-              </h4>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">東京</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">大阪</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">名古屋</span>
-                </label>
-              </div>
-            </div>
-
             <div>
               <h4 className="text-sm font-medium text-gray-700 mb-3">
                 価格帯
@@ -267,9 +276,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 </div>
               </div>
             </div>
+            idijaj
 
             <button className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
               フィルターをリセット
+            </button>
+            bguig
+       
+            <button
+              onClick={() => {
+                /* 検索処理呼び出し */
+              }}
+              className="
+                mt-4
+                w-full
+                py-3
+                bg-gray-800 text-black
+                text-center
+                rounded-lg
+                hover:bg-gray-700
+                transition-colors
+                font-semibold
+              "
+            >
+              検索
             </button>
           </div>
         </div>

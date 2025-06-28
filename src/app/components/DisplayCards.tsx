@@ -4,6 +4,8 @@ import LocationCard from "./LocationCard";
 import { BusinessCard } from "./businesscard/BusinessCard";
 import { dummyData } from "@/data/dummyData"; // エイリアス設定に合わせてパスを調整
 import { Pagination } from "./Pagination";
+import { useFilter } from "@/app/context/FilterContext"; // 追加: コンテキストからフェッチデータ取得
+
 
 type ImageType = {
   url: string;
@@ -34,6 +36,8 @@ interface DisplayCardsProps {
 
 export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar }: DisplayCardsProps) {
   // const datalist = dummyData
+  const { fetchedData } = useFilter();
+  console.log("Displaycardsで読んでいるコンテキストの fetchedData:", fetchedData);
   const datalist = images
   console.log("datalist",datalist)
 
