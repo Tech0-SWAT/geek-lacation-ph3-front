@@ -7,6 +7,7 @@ export type Filters = {
   places: string[];
   price: string | null;
   equipment: string[];
+  usageTime: { start: number; end: number } | null;
 };
 
 // コンテキストの初期値
@@ -15,6 +16,7 @@ const initial: Filters = {
   places: [],
   price: null,
   equipment: [], 
+  usageTime: null,
 };
 const initialFetchedData: any[] = [];
 

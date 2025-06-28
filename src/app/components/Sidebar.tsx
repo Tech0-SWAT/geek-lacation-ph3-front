@@ -10,33 +10,35 @@ interface SidebarProps {
 }
 
 const equipmentList = [
-  "駐車場",
-  "エレベーター",
-  "キッチン",
   "ゼネ車",
+  "キッチン", 
+  "同録",
   "養生",
   "電源",
+  "駐車場",
   "特機",
-  "同録",
+  "スモーク使用",
   "火器使用",
 ];
 
 // 日本語設備名とfacilitiesキーのマッピング
 const equipmentMapping: Record<string, string> = {
-  "駐車場": "has_parking",
-  "エレベーター": "elevator",
-  "キッチン": "kitchen",
   "ゼネ車": "power_car",
+  "キッチン": "kitchen",
+  "同録": "sound_recording_ok",
   "養生": "protection",
   "電源": "electric_available",
+  "駐車場": "has_parking",
   "特機": "special_equipment",
-  "同録": "sound_recording_ok",
+  "スモーク使用": "smoke_usage",
   "火器使用": "fire_usage",
 };
 
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { filters, setFilters, resetFilters } = useFilter();
+  const [equipmentExpanded, setEquipmentExpanded] = React.useState(true);
+  const [usageTimeExpanded, setUsageTimeExpanded] = React.useState(true);
 
   const toggleEquipment = (eq: string) => {
     const facilityKey = equipmentMapping[eq];
@@ -70,6 +72,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
 
   const selectPrice = (price: string) => {
     setFilters(prev => ({ ...prev, price }));
+  };
+
+  const updateUsageTime = (start: number, end: number) => {
+    setFilters(prev => ({ 
+      ...prev, 
+      usageTime: { start, end } 
+    }));
   };
 
   return (
@@ -108,22 +117,131 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           </h3>
 
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-3">
-              設備
-            </h4>
-            <div className="space-y-2">
-              {equipmentList.map(eq => (
-                <label key={eq} className="flex items-center">
+            <button
+              onClick={() => setEquipmentExpanded(!equipmentExpanded)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <h4 className="text-sm font-medium text-gray-700">
+                設備
+              </h4>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${equipmentExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {equipmentExpanded && (
+              <div className="mt-3 space-y-2">
+                {equipmentList.map(eq => (
+                  <label key={eq} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.equipment.includes(equipmentMapping[eq])}
+                      onChange={() => toggleEquipment(eq)}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-600">{eq} (132)</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 使用時間セクション */}
+          <div>
+            <button
+              onClick={() => setUsageTimeExpanded(!usageTimeExpanded)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <h4 className="text-sm font-medium text-gray-700">
+                使用時間
+              </h4>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${usageTimeExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {usageTimeExpanded && (
+              <div className="mt-3 px-2">
+              {/* レンジスライダー */}
+              <div className="mb-4">
+                <div className="relative">
+                  <div className="h-2 bg-gray-200 rounded-full">
+                    <div 
+                      className="h-2 bg-gray-400 rounded-full absolute"
+                      style={{
+                        left: `${((filters.usageTime?.start || 8) - 8) / 16 * 100}%`,
+                        width: `${((filters.usageTime?.end || 16) - (filters.usageTime?.start || 8)) / 16 * 100}%`
+                      }}
+                    />
+                  </div>
                   <input
-                    type="checkbox"
-                    checked={filters.equipment.includes(equipmentMapping[eq])}
-                    onChange={() => toggleEquipment(eq)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    type="range"
+                    min="8"
+                    max="24"
+                    value={filters.usageTime?.start || 8}
+                    onChange={(e) => updateUsageTime(parseInt(e.target.value), filters.usageTime?.end || 16)}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
                   />
-                  <span className="ml-2 text-sm text-gray-600">{eq}</span>
-                </label>
-              ))}
-            </div>
+                  <input
+                    type="range"
+                    min="8"
+                    max="24"
+                    value={filters.usageTime?.end || 16}
+                    onChange={(e) => updateUsageTime(filters.usageTime?.start || 8, parseInt(e.target.value))}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                    style={{ left: `${((filters.usageTime?.start || 8) - 8) / 16 * 100}%` }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                    style={{ left: `${((filters.usageTime?.end || 16) - 8) / 16 * 100}%` }}
+                  />
+                </div>
+              </div>
+              
+              {/* 時間入力フィールド */}
+              <div className="flex items-center justify-center space-x-3">
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="8"
+                    max="23"
+                    value={filters.usageTime?.start || 8}
+                    onChange={(e) => {
+                      const start = Math.max(8, Math.min(23, parseInt(e.target.value) || 8));
+                      updateUsageTime(start, Math.max(start + 1, filters.usageTime?.end || 16));
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">〜</span>
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="9"
+                    max="24"
+                    value={filters.usageTime?.end || 16}
+                    onChange={(e) => {
+                      const end = Math.max(9, Math.min(24, parseInt(e.target.value) || 16));
+                      updateUsageTime(Math.min(end - 1, filters.usageTime?.start || 8), end);
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">時</span>
+              </div>
+              </div>
+            )}
           </div>
           
           <div className="space-y-6">
@@ -277,6 +395,135 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     <span className="ml-2 text-sm text-gray-600">名古屋</span>
                   </label>
                 </div>
+              </div>
+
+              {/* モバイル版設備セクション */}
+              <div>
+                <button
+                  onClick={() => setEquipmentExpanded(!equipmentExpanded)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <h4 className="text-sm font-medium text-gray-700">
+                    設備
+                  </h4>
+                  <svg
+                    className={`w-4 h-4 text-gray-500 transition-transform ${equipmentExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {equipmentExpanded && (
+                  <div className="mt-3 space-y-2">
+                    {equipmentList.map(eq => (
+                      <label key={eq} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filters.equipment.includes(equipmentMapping[eq])}
+                          onChange={() => toggleEquipment(eq)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-600">{eq} (132)</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* モバイル版使用時間セクション */}
+              <div>
+                <button
+                  onClick={() => setUsageTimeExpanded(!usageTimeExpanded)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <h4 className="text-sm font-medium text-gray-700">
+                    使用時間
+                  </h4>
+                  <svg
+                    className={`w-4 h-4 text-gray-500 transition-transform ${usageTimeExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {usageTimeExpanded && (
+                <div className="px-2">
+                  {/* レンジスライダー */}
+                  <div className="mb-4">
+                    <div className="relative">
+                      <div className="h-2 bg-gray-200 rounded-full">
+                        <div 
+                          className="h-2 bg-gray-400 rounded-full absolute"
+                          style={{
+                            left: `${((filters.usageTime?.start || 8) - 8) / 16 * 100}%`,
+                            width: `${((filters.usageTime?.end || 16) - (filters.usageTime?.start || 8)) / 16 * 100}%`
+                          }}
+                        />
+                      </div>
+                      <input
+                        type="range"
+                        min="8"
+                        max="24"
+                        value={filters.usageTime?.start || 8}
+                        onChange={(e) => updateUsageTime(parseInt(e.target.value), filters.usageTime?.end || 16)}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                      />
+                      <input
+                        type="range"
+                        min="8"
+                        max="24"
+                        value={filters.usageTime?.end || 16}
+                        onChange={(e) => updateUsageTime(filters.usageTime?.start || 8, parseInt(e.target.value))}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                        style={{ left: `${((filters.usageTime?.start || 8) - 8) / 16 * 100}%` }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                        style={{ left: `${((filters.usageTime?.end || 16) - 8) / 16 * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* 時間入力フィールド */}
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="8"
+                        max="23"
+                        value={filters.usageTime?.start || 8}
+                        onChange={(e) => {
+                          const start = Math.max(8, Math.min(23, parseInt(e.target.value) || 8));
+                          updateUsageTime(start, Math.max(start + 1, filters.usageTime?.end || 16));
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">〜</span>
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="9"
+                        max="24"
+                        value={filters.usageTime?.end || 16}
+                        onChange={(e) => {
+                          const end = Math.max(9, Math.min(24, parseInt(e.target.value) || 16));
+                          updateUsageTime(Math.min(end - 1, filters.usageTime?.start || 8), end);
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">時</span>
+                  </div>
+                </div>
+                )}
               </div>
 
               <div>
