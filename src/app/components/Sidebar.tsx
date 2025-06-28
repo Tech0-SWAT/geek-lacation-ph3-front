@@ -10,16 +10,29 @@ interface SidebarProps {
 }
 
 const equipmentList = [
-  "ゼネ車",
+  "駐車場",
+  "エレベーター",
   "キッチン",
-  "同録",
+  "ゼネ車",
   "養生",
   "電源",
-  "駐車場",
   "特機",
-  "スモーク使用",
+  "同録",
   "火器使用",
 ];
+
+// 日本語設備名とfacilitiesキーのマッピング
+const equipmentMapping: Record<string, string> = {
+  "駐車場": "has_parking",
+  "エレベーター": "elevator",
+  "キッチン": "kitchen",
+  "ゼネ車": "power_car",
+  "養生": "protection",
+  "電源": "electric_available",
+  "特機": "special_equipment",
+  "同録": "sound_recording_ok",
+  "火器使用": "fire_usage",
+};
 
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
@@ -146,9 +159,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             </div>
           </div>
 
-          <button className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+          <button 
+            onClick={resetFilters}
+            className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+          >
             フィルターをリセット
           </button>
+          <button
+              onClick={() => {
+                /* 検索処理呼び出し */
+              }}
+              className="
+                mt-4
+                w-full
+                py-3
+                bg-gray-800 text-white
+                text-center
+                rounded-lg
+                hover:bg-gray-700
+                transition-colors
+                font-semibold
+              "
+            >
+              検索
+            </button>
         </div>
         }
       </div>
@@ -276,13 +310,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 </div>
               </div>
             </div>
-            idijaj
 
-            <button className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+            <button 
+              onClick={resetFilters}
+              className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            >
               フィルターをリセット
             </button>
-            bguig
-       
+
             <button
               onClick={() => {
                 /* 検索処理呼び出し */
