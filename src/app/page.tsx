@@ -39,9 +39,15 @@ export default function Home() {
   const [count, setCount] = useState(0);
   // 一度初期データを取得したかどうかを判定するフラグ
   const [isInitialDataFetched, setIsInitialDataFetched] = useState(false);
-
+  // サイドバーの開閉状態（モバイル用）
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // 初回実行済みかを判定するためのref
   const hasSearched = useRef(false);
+
+  // サイドバーのトグル関数（モバイル用）
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   useEffect(() => {
     // セッションがあり、初期データがまだ取得されていない場合にだけフェッチする
@@ -161,14 +167,16 @@ export default function Home() {
   if (loading) {
     return (
       <AuthGuard>
-        <Navbar />
-        <div className="mt-[247px] mb-[161px]">
-          <Search onSearch={querySearch}/>
+        <div className="lg:pb-0 pb-20">
+          <Navbar />
+          <div className="mt-[247px] mb-[161px]">
+            <Search onSearch={querySearch}/>
+          </div>
+          <div className="pb-[300px] bg-[#F2F6F9]">
+            Loading...
+          </div>
+          <Footer />
         </div>
-        <div className="pb-[300px] bg-[#F2F6F9]">
-          Loading...
-        </div>
-        <Footer />
       </AuthGuard>
     );
   }
@@ -176,12 +184,18 @@ export default function Home() {
   // ローディングが終わったら通常のUIを表示
   return (
     <AuthGuard>
-      <Navbar />
-      <div className="mt-[247px] mb-[161px]">
-        <Search onSearch={querySearch}/>
+      <div className="lg:pb-0 pb-20">
+        <Navbar />
+        <div className="mt-[247px] mb-[161px]">
+          <Search onSearch={querySearch}/>
+        </div>
+        <DisplayCards 
+          images={displayData} 
+          isSidebarOpen={isSidebarOpen} 
+          onToggleSidebar={toggleSidebar} 
+        />
+        <Footer />
       </div>
-      <DisplayCards images={displayData} />
-      <Footer />
     </AuthGuard>
   );
 
