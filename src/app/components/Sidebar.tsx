@@ -39,11 +39,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { filters, setFilters, resetFilters } = useFilter();
 
   const toggleEquipment = (eq: string) => {
+    const facilityKey = equipmentMapping[eq];
     setFilters(prev => ({
       ...prev,
-      equipment: prev.equipment.includes(eq)
-        ? prev.equipment.filter(e => e !== eq)
-        : [...prev.equipment, eq],
+      equipment: prev.equipment.includes(facilityKey)
+        ? prev.equipment.filter(e => e !== facilityKey)
+        : [...prev.equipment, facilityKey],
     }));
   };
 
@@ -115,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 <label key={eq} className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={filters.equipment.includes(eq)}
+                    checked={filters.equipment.includes(equipmentMapping[eq])}
                     onChange={() => toggleEquipment(eq)}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
