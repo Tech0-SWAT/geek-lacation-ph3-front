@@ -4,18 +4,43 @@ import SidebarToggleIcon from './icon/SidebarToggleIcon';
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
-  className?: string;
+  // className?: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
+// export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+
   return (
     <>
       {/* デスクトップ版サイドバー - DisplayCardsエリア内に固定配置 */}
-      <div 
-        className={`hidden lg:block relative w-64 bg-white shadow-lg border-r border-gray-200 min-h-screen ${className}`}
+      <div
+        className={`
+          hidden lg:flex flex-col
+          ${isOpen ? "w-64" : "w-16"}
+          bg-white
+          transition-width duration-300
+          relative
+          rounded-r-3xl
+        `}
       >
+        {/* 開閉ボタン */}
+        <button
+          onClick={onToggle}
+          className={`
+            absolute top-4 right-[-12px]
+            w-8 h-8 bg-white border border-gray-200 rounded-full
+            flex items-center justify-center shadow
+            hover:bg-gray-100
+            transition-colors
+          `}
+          aria-label={isOpen ? "サイドバーを閉じる" : "サイドバーを開く"}
+        >
+          <SidebarToggleIcon size={20} className={isOpen ? "rotate-180" : ""} />
+        </button>
+
         {/* フィルターコンテンツ - デスクトップでは常時表示 */}
-        <div className="px-4 pb-4 pt-6">
+        {isOpen && 
+        <div className="px-4 pb-4 pt-6 overflow-y-auto flex-1">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
             フィルター
           </h3>
@@ -116,6 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = 
             フィルターをリセット
           </button>
         </div>
+        }
       </div>
 
       {/* モバイル版底部ナビゲーション */}
