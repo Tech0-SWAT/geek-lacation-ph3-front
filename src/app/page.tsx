@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react'
 // import { redirect } from 'next/navigation'
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import AuthGuard from '../components/AuthGuard';
 
 const test_query = {
   "oid": "sample-org-002",
@@ -150,27 +151,16 @@ export default function Home() {
 
 
   useEffect(() => {
-    if (initialFetchData.length > 0 && displayData.length === 0) {
+    if (initialFetchData && initialFetchData.length > 0 && displayData.length === 0) {
       setDisplayData(initialFetchData);
     }
   }, [initialFetchData]);
 
-  // ログインしていない場合のガード
-  // if (!session) {
-  //   return (
-  //     <>
-  //       <Navbar />
-  //       <div className="container mx-auto flex justify-center items-center h-screen">
-  //         <p className="text-xl font-bold">サインインして下さい</p>
-  //       </div>
-  //     </>
-  //   );
-  // }
 
   // ローディング中ならスピナーを表示
   if (loading) {
     return (
-      <>
+      <AuthGuard>
         <Navbar />
         <div className="mt-[247px] mb-[161px]">
           <Search onSearch={querySearch}/>
@@ -179,20 +169,20 @@ export default function Home() {
           Loading...
         </div>
         <Footer />
-      </>
+      </AuthGuard>
     );
   }
 
   // ローディングが終わったら通常のUIを表示
   return (
-    <>
+    <AuthGuard>
       <Navbar />
       <div className="mt-[247px] mb-[161px]">
         <Search onSearch={querySearch}/>
       </div>
       <DisplayCards images={displayData} />
       <Footer />
-    </>
+    </AuthGuard>
   );
 
   // コンポーネントのレンダリング

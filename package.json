@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.26.0",
+    "@auth0/nextjs-auth0": "^3.5.0",
     "bcryptjs": "^2.4.3",
     "firebase": "^10.7.1",
     "next": "^14",
