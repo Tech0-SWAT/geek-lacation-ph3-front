@@ -75,10 +75,46 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   };
 
   const updateUsageTime = (start: number, end: number) => {
+    // 妥当性チェック
+    const validStart = Math.max(8, Math.min(23, start));
+    const validEnd = Math.max(9, Math.min(24, end));
+    
+    // 開始時間は終了時間より小さくなければならない
+    const finalStart = Math.min(validStart, validEnd - 1);
+    const finalEnd = Math.max(validEnd, validStart + 1);
+    
     setFilters(prev => ({ 
       ...prev, 
-      usageTime: { start, end } 
+      usageTime: { start: finalStart, end: finalEnd } 
     }));
+  };
+
+  const handleTrackClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const trackWidth = rect.width;
+    const clickPercentage = clickX / trackWidth;
+    
+    // クリック位置の時間を計算（8時〜24時の範囲）
+    const clickedTime = Math.round(8 + (clickPercentage * 16));
+    const constrainedTime = Math.max(8, Math.min(24, clickedTime));
+    
+    const currentStart = filters.usageTime?.start || 8;
+    const currentEnd = filters.usageTime?.end || 16;
+    
+    // クリック位置からスタートとエンドのどちらが近いかを計算
+    const distanceToStart = Math.abs(constrainedTime - currentStart);
+    const distanceToEnd = Math.abs(constrainedTime - currentEnd);
+    
+    if (distanceToStart <= distanceToEnd) {
+      // スタート時間を更新（エンド時間より小さくなるように制限）
+      const newStart = Math.min(constrainedTime, currentEnd - 1);
+      updateUsageTime(Math.max(8, newStart), currentEnd);
+    } else {
+      // エンド時間を更新（スタート時間より大きくなるように制限）
+      const newEnd = Math.max(constrainedTime, currentStart + 1);
+      updateUsageTime(currentStart, Math.min(24, newEnd));
+    }
   };
 
   return (
@@ -173,7 +209,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               {/* レンジスライダー */}
               <div className="mb-4">
                 <div className="relative">
-                  <div className="h-2 bg-gray-200 rounded-full">
+                  <div 
+                    className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                    onClick={handleTrackClick}
+                  >
                     <div 
                       className="h-2 bg-gray-400 rounded-full absolute"
                       style={{
@@ -185,25 +224,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   <input
                     type="range"
                     min="8"
-                    max="24"
+                    max="23"
                     value={filters.usageTime?.start || 8}
-                    onChange={(e) => updateUsageTime(parseInt(e.target.value), filters.usageTime?.end || 16)}
-                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      const newStart = parseInt(e.target.value);
+                      const currentEnd = filters.usageTime?.end || 16;
+                      updateUsageTime(newStart, Math.max(newStart + 1, currentEnd));
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                    style={{ background: 'transparent' }}
                   />
                   <input
                     type="range"
-                    min="8"
+                    min="9"
                     max="24"
                     value={filters.usageTime?.end || 16}
-                    onChange={(e) => updateUsageTime(filters.usageTime?.start || 8, parseInt(e.target.value))}
-                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      const newEnd = parseInt(e.target.value);
+                      const currentStart = filters.usageTime?.start || 8;
+                      updateUsageTime(Math.min(currentStart, newEnd - 1), newEnd);
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                    style={{ background: 'transparent' }}
                   />
                   <div 
-                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
                     style={{ left: `${((filters.usageTime?.start || 8) - 8) / 16 * 100}%` }}
                   />
                   <div 
-                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
                     style={{ left: `${((filters.usageTime?.end || 16) - 8) / 16 * 100}%` }}
                   />
                 </div>
@@ -219,7 +268,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     value={filters.usageTime?.start || 8}
                     onChange={(e) => {
                       const start = Math.max(8, Math.min(23, parseInt(e.target.value) || 8));
-                      updateUsageTime(start, Math.max(start + 1, filters.usageTime?.end || 16));
+                      const currentEnd = filters.usageTime?.end || 16;
+                      updateUsageTime(start, Math.max(start + 1, currentEnd));
                     }}
                     className="w-full text-sm text-center bg-transparent outline-none"
                   />
@@ -455,7 +505,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   {/* レンジスライダー */}
                   <div className="mb-4">
                     <div className="relative">
-                      <div className="h-2 bg-gray-200 rounded-full">
+                      <div 
+                        className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                        onClick={handleTrackClick}
+                      >
                         <div 
                           className="h-2 bg-gray-400 rounded-full absolute"
                           style={{
@@ -467,25 +520,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                       <input
                         type="range"
                         min="8"
-                        max="24"
+                        max="23"
                         value={filters.usageTime?.start || 8}
-                        onChange={(e) => updateUsageTime(parseInt(e.target.value), filters.usageTime?.end || 16)}
-                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                        onChange={(e) => {
+                          const newStart = parseInt(e.target.value);
+                          const currentEnd = filters.usageTime?.end || 16;
+                          updateUsageTime(newStart, Math.max(newStart + 1, currentEnd));
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                        style={{ background: 'transparent' }}
                       />
                       <input
                         type="range"
-                        min="8"
+                        min="9"
                         max="24"
                         value={filters.usageTime?.end || 16}
-                        onChange={(e) => updateUsageTime(filters.usageTime?.start || 8, parseInt(e.target.value))}
-                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer"
+                        onChange={(e) => {
+                          const newEnd = parseInt(e.target.value);
+                          const currentStart = filters.usageTime?.start || 8;
+                          updateUsageTime(Math.min(currentStart, newEnd - 1), newEnd);
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                        style={{ background: 'transparent' }}
                       />
                       <div 
-                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
                         style={{ left: `${((filters.usageTime?.start || 8) - 8) / 16 * 100}%` }}
                       />
                       <div 
-                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5"
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
                         style={{ left: `${((filters.usageTime?.end || 16) - 8) / 16 * 100}%` }}
                       />
                     </div>
@@ -501,7 +564,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                         value={filters.usageTime?.start || 8}
                         onChange={(e) => {
                           const start = Math.max(8, Math.min(23, parseInt(e.target.value) || 8));
-                          updateUsageTime(start, Math.max(start + 1, filters.usageTime?.end || 16));
+                          const currentEnd = filters.usageTime?.end || 16;
+                          updateUsageTime(start, Math.max(start + 1, currentEnd));
                         }}
                         className="w-full text-sm text-center bg-transparent outline-none"
                       />
@@ -515,7 +579,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                         value={filters.usageTime?.end || 16}
                         onChange={(e) => {
                           const end = Math.max(9, Math.min(24, parseInt(e.target.value) || 16));
-                          updateUsageTime(Math.min(end - 1, filters.usageTime?.start || 8), end);
+                          const currentStart = filters.usageTime?.start || 8;
+                          updateUsageTime(Math.min(currentStart, end - 1), end);
                         }}
                         className="w-full text-sm text-center bg-transparent outline-none"
                       />
