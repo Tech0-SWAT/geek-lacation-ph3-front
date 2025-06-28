@@ -51,6 +51,9 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json();
+    
+    // console.log("🎯 FastAPIからのデータ:", data);
+
     return NextResponse.json(data);
 
   } catch (error: any) {
