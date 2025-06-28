@@ -34,7 +34,7 @@ export default function LocationCard({
       <div className="w-full aspect-[16/9] relative overflow-hidden">
       
         <Image
-          src={images[mainIndex]?.url || '/noimage.png'}
+          src={images[mainIndex]?.url || '/no-image.png'}
           alt={images[mainIndex]?.caption || 'main image'}
           fill
           className="object-cover"
