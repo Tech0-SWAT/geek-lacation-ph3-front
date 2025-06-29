@@ -1,6 +1,7 @@
 import React from 'react';
 import SidebarToggleIcon from './icon/SidebarToggleIcon';
 import { useFilter } from '@/app/context/FilterContext';
+import { FaTrash } from "react-icons/fa6";
 
 
 interface SidebarProps {
@@ -249,9 +250,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
         {/* フィルターコンテンツ - デスクトップでは常時表示 */}
         {isOpen && 
         <div className="px-4 pb-4 pt-6 overflow-y-auto flex-1">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            フィルター
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">
+              絞り込み
+            </h3>
+            <button
+              onClick={resetFilters}
+              className="flex items-center p-2 text-gray-500 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-colors"
+              title="選択条件をクリア"
+            >
+              <FaTrash size={16} />
+              <span className="ml-1 text-sm">すべてクリア</span>
+            </button>
+          </div>
+
+          <hr className="mt-[35px] mb-[20px]" />
 
           <div>
             <button
@@ -287,6 +300,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
             )}
           </div>
 
+          <hr className="mt-[35px] mb-[20px]" />
+
           {/* 使用時間セクション */}
           <div>
             <button
@@ -310,13 +325,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                 {filters.usageTime === null ? (
                   /* 空状態UI */
                   <div className="text-center py-6">
-                    <p className="text-sm text-gray-500 mb-3">時間を選択してください</p>
-                    <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                     <button 
                       onClick={initializeUsageTime}
                       className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                     >
-                      時間を選択
+                      使用時間で検索
                     </button>
                   </div>
                 ) : (
@@ -444,6 +457,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
             )}
           </div>
 
+          <hr className="mt-[35px] mb-[20px]" />
+
           {/* 支払い方法セクション */}
           <div>
             <button
@@ -479,6 +494,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
             )}
           </div>
 
+          <hr className="mt-[35px] mb-[20px]" />
+
           {/* 面積セクション */}
           <div>
             <button
@@ -502,13 +519,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                 {filters.area === null ? (
                   /* 空状態UI */
                   <div className="text-center py-6">
-                    <p className="text-sm text-gray-500 mb-3">面積を選択してください</p>
-                    <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                     <button 
                       onClick={initializeArea}
                       className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                     >
-                      面積を選択
+                      面積で検索
                     </button>
                   </div>
                 ) : (
@@ -636,6 +651,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
             )}
           </div>
 
+          <hr className="mt-[35px] mb-[20px]" />
+
           {/* 天高セクション */}
           <div>
             <button
@@ -659,13 +676,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                 {filters.ceilingHeight === null ? (
                   /* 空状態UI */
                   <div className="text-center py-6">
-                    <p className="text-sm text-gray-500 mb-3">天高を選択してください</p>
-                    <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                     <button 
                       onClick={initializeCeilingHeight}
                       className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                     >
-                      天高を選択
+                      天高で検索
                     </button>
                   </div>
                 ) : (
@@ -793,6 +808,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
             )}
           </div>
 
+          <hr className="mt-[35px] mb-[20px]" />
+
           {/* 使用人数セクション */}
           <div>
             <button
@@ -816,13 +833,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                 {filters.userCount === null ? (
                   /* 空状態UI */
                   <div className="text-center py-6">
-                    <p className="text-sm text-gray-500 mb-3">使用人数を選択してください</p>
-                    <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
+
                     <button 
-                      disabled={true}
-                      className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
+                      onClick={initializeUserCount}
+                      className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                     >
-                      使用人数を選択
+                      使用人数で検索
                     </button>
                   </div>
                 ) : (
@@ -949,13 +965,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
               </div>
             )}
           </div>
-
+{/* 
           <button 
             onClick={resetFilters}
             className="w-full mt-6 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
           >
             フィルターをリセット
-          </button>
+          </button> */}
           <button
               onClick={onIntegratedSearch}
               className="
@@ -1000,12 +1016,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
               <h3 className="text-lg font-semibold text-gray-800">
                 フィルター
               </h3>
-              <button
-                onClick={onToggle}
-                className="p-2 text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={resetFilters}
+                  className="flex items-center p-2 text-gray-500 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="選択条件をクリア"
+                >
+                  <FaTrash size={16} />
+                  <span className="ml-1 text-sm">すべてクリア</span>
+                </button>
+                <button
+                  onClick={onToggle}
+                  className="p-2 text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
             
             <div className="space-y-6">
@@ -1125,13 +1151,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                   {filters.usageTime === null ? (
                     /* モバイル版空状態UI */
                     <div className="text-center py-6">
-                      <p className="text-sm text-gray-500 mb-3">時間を選択してください</p>
-                      <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                       <button 
                         onClick={initializeUsageTime}
                         className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                       >
-                        時間を選択
+                        使用時間で検索
                       </button>
                     </div>
                   ) : (
@@ -1323,7 +1347,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                         onClick={initializeArea}
                         className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                       >
-                        面積を選択
+                        面積で検索
                       </button>
                     </div>
                   ) : (
@@ -1480,7 +1504,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                         onClick={initializeCeilingHeight}
                         className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                       >
-                        天高を選択
+                        天高で検索
                       </button>
                     </div>
                   ) : (
@@ -1637,7 +1661,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                         disabled={true}
                         className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
                       >
-                        使用人数を選択
+                        使用人数で検索
                       </button>
                     </div>
                   ) : (
