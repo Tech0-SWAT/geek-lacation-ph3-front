@@ -183,13 +183,13 @@ export default function Home() {
     try {
       const endpointURL = "api/get_information_by_query";
       
-      // 基本的なbodyData（現在のquerySearchと同じ形式）
+      // 基本的なbodyData（FilterContextから取得）
       const bodyData = {
         keyword: filters.keyword || "",  // FilterContextからキーワードを取得
-        categories: [],  // 現在は空配列（後で拡張可能）
-        area: [],  // 現在は空配列（後で拡張可能）
-        price_day: [null, null],  // 現在は空（後で拡張可能）
-        price_hour: [null, null],  // 現在は空（後で拡張可能）
+        categories: filters.categories || [],  // FilterContextからカテゴリを取得
+        area: filters.locations || [],  // FilterContextから地域を取得
+        price_day: filters.price_day || [null, null],  // FilterContextから価格（日）を取得
+        price_hour: filters.price_hour || [null, null],  // FilterContextから価格（時）を取得
         
         // Sidebarフィルターを追加（API仕様に合わせた名前）
         facilities: filters.equipment ?? [],

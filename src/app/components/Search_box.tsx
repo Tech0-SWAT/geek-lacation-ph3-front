@@ -62,8 +62,15 @@ export default function Search({ onSearch }: SearchProps) {
   
     onSearch(searchedKeyword, middlebarTags);
     setPrevSearch({ keyword: searchedKeyword, tags: middlebarTags });
-    // FilterContextにもキーワードを同期
-    setFilters(prev => ({ ...prev, keyword: searchedKeyword }));
+    // FilterContextにも全データを同期
+    setFilters(prev => ({ 
+      ...prev, 
+      keyword: searchedKeyword,
+      categories: middlebarTags.categories,
+      locations: middlebarTags.area,
+      price_day: middlebarTags.price_day.length === 2 ? [middlebarTags.price_day[0], middlebarTags.price_day[1]] : [null, null],
+      price_hour: middlebarTags.price_hour.length === 2 ? [middlebarTags.price_hour[0], middlebarTags.price_hour[1]] : [null, null],
+    }));
   }, [middlebarTags, searchedKeyword, hasUserChanged, onSearch, setFilters]);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -71,8 +78,15 @@ export default function Search({ onSearch }: SearchProps) {
     // 検索ボタン押下時は、現在の入力値を使って検索し、保持する
     onSearch(keyword, middlebarTags);
     setSearchedKeyword(keyword);
-    // FilterContextにもキーワードを同期
-    setFilters(prev => ({ ...prev, keyword: keyword }));
+    // FilterContextにも全データを同期
+    setFilters(prev => ({ 
+      ...prev, 
+      keyword: keyword,
+      categories: middlebarTags.categories,
+      locations: middlebarTags.area,
+      price_day: middlebarTags.price_day.length === 2 ? [middlebarTags.price_day[0], middlebarTags.price_day[1]] : [null, null],
+      price_hour: middlebarTags.price_hour.length === 2 ? [middlebarTags.price_hour[0], middlebarTags.price_hour[1]] : [null, null],
+    }));
   };
 
   const handleTagsChange = useCallback((tags: {
@@ -83,7 +97,16 @@ export default function Search({ onSearch }: SearchProps) {
   }) => {
     setMiddlebarTags(tags);
     if (!hasUserChanged) setHasUserChanged(true);
-  }, [hasUserChanged]); 
+    
+    // FilterContextにもMiddlebarのデータを同期
+    setFilters(prev => ({
+      ...prev,
+      categories: tags.categories,
+      locations: tags.area,
+      price_day: tags.price_day.length === 2 ? [tags.price_day[0], tags.price_day[1]] : [null, null],
+      price_hour: tags.price_hour.length === 2 ? [tags.price_hour[0], tags.price_hour[1]] : [null, null],
+    }));
+  }, [hasUserChanged, setFilters]); 
 
   const handleClearAllRequest = () => {
     setKeyword("");
@@ -94,8 +117,15 @@ export default function Search({ onSearch }: SearchProps) {
       price_day: [],
       price_hour: [],
     });
-    // FilterContextのキーワードもクリア
-    setFilters(prev => ({ ...prev, keyword: "" }));
+    // FilterContextの関連フィールドもクリア
+    setFilters(prev => ({ 
+      ...prev, 
+      keyword: "",
+      categories: [],
+      locations: [],
+      price_day: [null, null],
+      price_hour: [null, null],
+    }));
   };
 
   return (
