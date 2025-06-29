@@ -280,7 +280,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                       onChange={() => toggleEquipment(eq)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="ml-2 text-sm text-gray-600">{eq} (132)</span>
+                    <span className="ml-2 text-sm text-gray-600">{eq} </span>
                   </label>
                 ))}
               </div>
@@ -472,7 +472,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                       onChange={() => togglePaymentMethod(method)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="ml-2 text-sm text-gray-600">{method} (132)</span>
+                    <span className="ml-2 text-sm text-gray-600">{method} </span>
                   </label>
                 ))}
               </div>
@@ -1095,7 +1095,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                           onChange={() => toggleEquipment(eq)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-600">{eq} (132)</span>
+                        <span className="ml-2 text-sm text-gray-600">{eq} </span>
                       </label>
                     ))}
                   </div>
@@ -1287,7 +1287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                           onChange={() => togglePaymentMethod(method)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-600">{method} (132)</span>
+                        <span className="ml-2 text-sm text-gray-600">{method} </span>
                       </label>
                     ))}
                   </div>

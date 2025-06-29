@@ -176,19 +176,19 @@ export default function Home() {
       
       // 基本的なbodyData（現在のquerySearchと同じ形式）
       const bodyData = {
-        keyword: "大浜海岸",  // 現在は空文字列（後で拡張可能）
+        keyword: "",  // 現在は空文字列（後で拡張可能）
         categories: [],  // 現在は空配列（後で拡張可能）
         area: [],  // 現在は空配列（後で拡張可能）
         price_day: [null, null],  // 現在は空（後で拡張可能）
         price_hour: [null, null],  // 現在は空（後で拡張可能）
         
-        // Sidebarフィルターを追加
-        equipment: filters.equipment ?? [],
+        // Sidebarフィルターを追加（API仕様に合わせた名前）
+        facilities: filters.equipment ?? [],
+        userCount: filters.userCount,
         usageTime: filters.usageTime,
-        paymentMethods: filters.paymentMethods ?? [],
         spaceArea: filters.area,
         ceilingHeight: filters.ceilingHeight,
-        userCount: filters.userCount,
+        payment_method: filters.paymentMethods ?? [],
       };
   
       console.log("Integrated search request body:", bodyData);
