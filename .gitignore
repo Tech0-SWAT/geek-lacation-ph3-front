@@ -41,6 +41,8 @@ next-env.d.ts
 .claude
 README_CLAUDE.md
 CLAUDE.md
-
+.mcp.json
+JAPANESE_CLAUDE.md
+japan_claude.md
 #private
 KUROSU/

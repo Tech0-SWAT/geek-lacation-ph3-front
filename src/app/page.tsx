@@ -9,14 +9,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthGuard from '../components/AuthGuard';
 import LocationCard from './components/LocationCard';
+import { useFilter } from './context/FilterContext'
 
-const test_query = {
-  "oid": "sample-org-002",
-  "keyword": "",
-  "occupations": ["プロデューサー"],
-  "avg_min": null,
-  "avg_max": null
-}
 
 // メインのHomeコンポーネント
 export default function Home() {
@@ -30,6 +24,17 @@ export default function Home() {
   //   }
   // }
   );
+
+  // コンテキストを取得
+  const { filters, fetchedData, setFetchedData  } = useFilter()  
+  useEffect(() => {
+    // フィルター値が変わるたびにログ出力
+    console.log('現在のフィルター状態:', filters)
+  }, [filters])
+  useEffect(() => {
+    console.log('コンテキストに保存されたフェッチ結果:', fetchedData);
+  }, [fetchedData]);
+
 
   // 初期データ用
   const [initialFetchData, setInitialFetchData] = useState([]);
@@ -104,6 +109,9 @@ export default function Home() {
       const data = await res.json();
       console.log("✅ 初期データ取得:", data);
       setInitialFetchData(data.results); // ← .results がある前提
+      console.log("✅  setInitialFetchData:", data.results);
+
+      setFetchedData(data.results); 
     } catch (error) {
       console.error("❌ Fetch error:", error);
     } finally {

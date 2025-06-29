@@ -26,7 +26,7 @@ export default function LocationCard({
   images = [],
 }: LocationCardProps) {
   const[mainIndex, setMainIndex] = useState(0)
-  console.log("🎯 LocationCard images:", images)
+  // console.log("🎯 LocationCard images:", images)
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 w-[360px] overflow-hidden">
 
