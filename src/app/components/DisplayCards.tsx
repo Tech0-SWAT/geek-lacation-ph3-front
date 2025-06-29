@@ -14,6 +14,7 @@ type ImageType = {
 };
 
 type LocationItem = {
+  id: number;
   name: string;
   address: string;
   tel?: string;
@@ -89,6 +90,7 @@ export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar, o
               {currentItems.map((data, index) => (
               <LocationCard
                 key={index}
+                id={data.id}
                 name={data.name}
                 address={data.address}
                 tel={data.tel}
