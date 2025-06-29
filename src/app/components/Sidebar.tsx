@@ -34,11 +34,30 @@ const equipmentMapping: Record<string, string> = {
   "火器使用": "fire_usage",
 };
 
+const paymentMethodList = [
+  "カード",
+  "その他", 
+  "現金",
+  "請求書",
+];
+
+// 日本語支払い方法名とキーのマッピング
+const paymentMethodMapping: Record<string, string> = {
+  "カード": "card",
+  "その他": "other",
+  "現金": "cash",
+  "請求書": "invoice",
+};
+
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const { filters, setFilters, resetFilters } = useFilter();
   const [equipmentExpanded, setEquipmentExpanded] = React.useState(true);
   const [usageTimeExpanded, setUsageTimeExpanded] = React.useState(true);
+  const [paymentMethodExpanded, setPaymentMethodExpanded] = React.useState(true);
+  const [areaExpanded, setAreaExpanded] = React.useState(true);
+  const [ceilingHeightExpanded, setCeilingHeightExpanded] = React.useState(true);
+  const [userCountExpanded, setUserCountExpanded] = React.useState(true);
 
   const toggleEquipment = (eq: string) => {
     const facilityKey = equipmentMapping[eq];
@@ -47,6 +66,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       equipment: prev.equipment.includes(facilityKey)
         ? prev.equipment.filter(e => e !== facilityKey)
         : [...prev.equipment, facilityKey],
+    }));
+  };
+
+  const togglePaymentMethod = (method: string) => {
+    const methodKey = paymentMethodMapping[method];
+    setFilters(prev => ({
+      ...prev,
+      paymentMethods: prev.paymentMethods.includes(methodKey)
+        ? prev.paymentMethods.filter(m => m !== methodKey)
+        : [...prev.paymentMethods, methodKey],
     }));
   };
 
@@ -70,9 +99,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     }));
   };
 
-  const selectPrice = (price: string) => {
-    setFilters(prev => ({ ...prev, price }));
-  };
 
   const updateUsageTime = (start: number, end: number) => {
     // 妥当性チェック
@@ -86,6 +112,51 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     setFilters(prev => ({ 
       ...prev, 
       usageTime: { start: finalStart, end: finalEnd } 
+    }));
+  };
+
+  const updateArea = (start: number, end: number) => {
+    // 妥当性チェック (0㎡〜1000㎡)
+    const validStart = Math.max(0, Math.min(999, start));
+    const validEnd = Math.max(1, Math.min(1000, end));
+    
+    // 開始面積は終了面積より小さくなければならない
+    const finalStart = Math.min(validStart, validEnd - 1);
+    const finalEnd = Math.max(validEnd, validStart + 1);
+    
+    setFilters(prev => ({ 
+      ...prev, 
+      area: { start: finalStart, end: finalEnd } 
+    }));
+  };
+
+  const updateCeilingHeight = (start: number, end: number) => {
+    // 妥当性チェック (200cm〜500cm)
+    const validStart = Math.max(200, Math.min(499, start));
+    const validEnd = Math.max(201, Math.min(500, end));
+    
+    // 開始天高は終了天高より小さくなければならない
+    const finalStart = Math.min(validStart, validEnd - 1);
+    const finalEnd = Math.max(validEnd, validStart + 1);
+    
+    setFilters(prev => ({ 
+      ...prev, 
+      ceilingHeight: { start: finalStart, end: finalEnd } 
+    }));
+  };
+
+  const updateUserCount = (start: number, end: number) => {
+    // 妥当性チェック (1人〜200人)
+    const validStart = Math.max(1, Math.min(199, start));
+    const validEnd = Math.max(2, Math.min(200, end));
+    
+    // 開始人数は終了人数より小さくなければならない
+    const finalStart = Math.min(validStart, validEnd - 1);
+    const finalEnd = Math.max(validEnd, validStart + 1);
+    
+    setFilters(prev => ({ 
+      ...prev, 
+      userCount: { start: finalStart, end: finalEnd } 
     }));
   };
 
@@ -293,39 +364,430 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
               </div>
             )}
           </div>
-          
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-3">
-                価格帯
+
+          {/* 支払い方法セクション */}
+          <div>
+            <button
+              onClick={() => setPaymentMethodExpanded(!paymentMethodExpanded)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <h4 className="text-sm font-medium text-gray-700">
+                支払い方法
               </h4>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="price-desktop"
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">～10万円</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="price-desktop"
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">10万円～50万円</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="price-desktop"
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">50万円～</span>
-                </label>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${paymentMethodExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {paymentMethodExpanded && (
+              <div className="mt-3 space-y-2">
+                {paymentMethodList.map(method => (
+                  <label key={method} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.paymentMethods.includes(paymentMethodMapping[method])}
+                      onChange={() => togglePaymentMethod(method)}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-600">{method} (132)</span>
+                  </label>
+                ))}
               </div>
-            </div>
+            )}
+          </div>
+
+          {/* 面積セクション */}
+          <div>
+            <button
+              onClick={() => setAreaExpanded(!areaExpanded)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <h4 className="text-sm font-medium text-gray-700">
+                面積
+              </h4>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${areaExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {areaExpanded && (
+              <div className="mt-3 px-2">
+              {/* レンジスライダー */}
+              <div className="mb-4">
+                <div className="relative">
+                  <div 
+                    className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const clickX = e.clientX - rect.left;
+                      const trackWidth = rect.width;
+                      const clickPercentage = clickX / trackWidth;
+                      
+                      const clickedArea = Math.round(0 + (clickPercentage * 1000));
+                      const constrainedArea = Math.max(0, Math.min(1000, clickedArea));
+                      
+                      const currentStart = filters.area?.start || 300;
+                      const currentEnd = filters.area?.end || 500;
+                      
+                      const distanceToStart = Math.abs(constrainedArea - currentStart);
+                      const distanceToEnd = Math.abs(constrainedArea - currentEnd);
+                      
+                      if (distanceToStart <= distanceToEnd) {
+                        const newStart = Math.min(constrainedArea, currentEnd - 1);
+                        updateArea(Math.max(0, newStart), currentEnd);
+                      } else {
+                        const newEnd = Math.max(constrainedArea, currentStart + 1);
+                        updateArea(currentStart, Math.min(1000, newEnd));
+                      }
+                    }}
+                  >
+                    <div 
+                      className="h-2 bg-gray-400 rounded-full absolute"
+                      style={{
+                        left: `${((filters.area?.start || 300) - 0) / 1000 * 100}%`,
+                        width: `${((filters.area?.end || 500) - (filters.area?.start || 300)) / 1000 * 100}%`
+                      }}
+                    />
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="999"
+                    value={filters.area?.start || 300}
+                    onChange={(e) => {
+                      const newStart = parseInt(e.target.value);
+                      const currentEnd = filters.area?.end || 500;
+                      updateArea(newStart, Math.max(newStart + 1, currentEnd));
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                    style={{ background: 'transparent' }}
+                  />
+                  <input
+                    type="range"
+                    min="1"
+                    max="1000"
+                    value={filters.area?.end || 500}
+                    onChange={(e) => {
+                      const newEnd = parseInt(e.target.value);
+                      const currentStart = filters.area?.start || 300;
+                      updateArea(Math.min(currentStart, newEnd - 1), newEnd);
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                    style={{ background: 'transparent' }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                    style={{ left: `${((filters.area?.start || 300) - 0) / 1000 * 100}%` }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                    style={{ left: `${((filters.area?.end || 500) - 0) / 1000 * 100}%` }}
+                  />
+                </div>
+              </div>
+              
+              {/* 面積入力フィールド */}
+              <div className="flex items-center justify-center space-x-3">
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="0"
+                    max="999"
+                    value={filters.area?.start || 300}
+                    onChange={(e) => {
+                      const start = Math.max(0, Math.min(999, parseInt(e.target.value) || 300));
+                      const currentEnd = filters.area?.end || 500;
+                      updateArea(start, Math.max(start + 1, currentEnd));
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">〜</span>
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="1"
+                    max="1000"
+                    value={filters.area?.end || 500}
+                    onChange={(e) => {
+                      const end = Math.max(1, Math.min(1000, parseInt(e.target.value) || 500));
+                      updateArea(Math.min(end - 1, filters.area?.start || 300), end);
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">㎡</span>
+              </div>
+              </div>
+            )}
+          </div>
+
+          {/* 天高セクション */}
+          <div>
+            <button
+              onClick={() => setCeilingHeightExpanded(!ceilingHeightExpanded)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <h4 className="text-sm font-medium text-gray-700">
+                天高
+              </h4>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${ceilingHeightExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {ceilingHeightExpanded && (
+              <div className="mt-3 px-2">
+              {/* レンジスライダー */}
+              <div className="mb-4">
+                <div className="relative">
+                  <div 
+                    className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const clickX = e.clientX - rect.left;
+                      const trackWidth = rect.width;
+                      const clickPercentage = clickX / trackWidth;
+                      
+                      const clickedHeight = Math.round(200 + (clickPercentage * 300));
+                      const constrainedHeight = Math.max(200, Math.min(500, clickedHeight));
+                      
+                      const currentStart = filters.ceilingHeight?.start || 250;
+                      const currentEnd = filters.ceilingHeight?.end || 300;
+                      
+                      const distanceToStart = Math.abs(constrainedHeight - currentStart);
+                      const distanceToEnd = Math.abs(constrainedHeight - currentEnd);
+                      
+                      if (distanceToStart <= distanceToEnd) {
+                        const newStart = Math.min(constrainedHeight, currentEnd - 1);
+                        updateCeilingHeight(Math.max(200, newStart), currentEnd);
+                      } else {
+                        const newEnd = Math.max(constrainedHeight, currentStart + 1);
+                        updateCeilingHeight(currentStart, Math.min(500, newEnd));
+                      }
+                    }}
+                  >
+                    <div 
+                      className="h-2 bg-gray-400 rounded-full absolute"
+                      style={{
+                        left: `${((filters.ceilingHeight?.start || 250) - 200) / 300 * 100}%`,
+                        width: `${((filters.ceilingHeight?.end || 300) - (filters.ceilingHeight?.start || 250)) / 300 * 100}%`
+                      }}
+                    />
+                  </div>
+                  <input
+                    type="range"
+                    min="200"
+                    max="499"
+                    value={filters.ceilingHeight?.start || 250}
+                    onChange={(e) => {
+                      const newStart = parseInt(e.target.value);
+                      const currentEnd = filters.ceilingHeight?.end || 300;
+                      updateCeilingHeight(newStart, Math.max(newStart + 1, currentEnd));
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                    style={{ background: 'transparent' }}
+                  />
+                  <input
+                    type="range"
+                    min="201"
+                    max="500"
+                    value={filters.ceilingHeight?.end || 300}
+                    onChange={(e) => {
+                      const newEnd = parseInt(e.target.value);
+                      const currentStart = filters.ceilingHeight?.start || 250;
+                      updateCeilingHeight(Math.min(currentStart, newEnd - 1), newEnd);
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                    style={{ background: 'transparent' }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                    style={{ left: `${((filters.ceilingHeight?.start || 250) - 200) / 300 * 100}%` }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                    style={{ left: `${((filters.ceilingHeight?.end || 300) - 200) / 300 * 100}%` }}
+                  />
+                </div>
+              </div>
+              
+              {/* 天高入力フィールド */}
+              <div className="flex items-center justify-center space-x-3">
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="200"
+                    max="499"
+                    value={filters.ceilingHeight?.start || 250}
+                    onChange={(e) => {
+                      const start = Math.max(200, Math.min(499, parseInt(e.target.value) || 250));
+                      const currentEnd = filters.ceilingHeight?.end || 300;
+                      updateCeilingHeight(start, Math.max(start + 1, currentEnd));
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">〜</span>
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="201"
+                    max="500"
+                    value={filters.ceilingHeight?.end || 300}
+                    onChange={(e) => {
+                      const end = Math.max(201, Math.min(500, parseInt(e.target.value) || 300));
+                      updateCeilingHeight(Math.min(end - 1, filters.ceilingHeight?.start || 250), end);
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">cm</span>
+              </div>
+              </div>
+            )}
+          </div>
+
+          {/* 使用人数セクション */}
+          <div>
+            <button
+              onClick={() => setUserCountExpanded(!userCountExpanded)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <h4 className="text-sm font-medium text-gray-700">
+                使用人数
+              </h4>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${userCountExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {userCountExpanded && (
+              <div className="mt-3 px-2">
+              {/* レンジスライダー */}
+              <div className="mb-4">
+                <div className="relative">
+                  <div 
+                    className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const clickX = e.clientX - rect.left;
+                      const trackWidth = rect.width;
+                      const clickPercentage = clickX / trackWidth;
+                      
+                      const clickedCount = Math.round(1 + (clickPercentage * 199));
+                      const constrainedCount = Math.max(1, Math.min(200, clickedCount));
+                      
+                      const currentStart = filters.userCount?.start || 30;
+                      const currentEnd = filters.userCount?.end || 50;
+                      
+                      const distanceToStart = Math.abs(constrainedCount - currentStart);
+                      const distanceToEnd = Math.abs(constrainedCount - currentEnd);
+                      
+                      if (distanceToStart <= distanceToEnd) {
+                        const newStart = Math.min(constrainedCount, currentEnd - 1);
+                        updateUserCount(Math.max(1, newStart), currentEnd);
+                      } else {
+                        const newEnd = Math.max(constrainedCount, currentStart + 1);
+                        updateUserCount(currentStart, Math.min(200, newEnd));
+                      }
+                    }}
+                  >
+                    <div 
+                      className="h-2 bg-gray-400 rounded-full absolute"
+                      style={{
+                        left: `${((filters.userCount?.start || 30) - 1) / 199 * 100}%`,
+                        width: `${((filters.userCount?.end || 50) - (filters.userCount?.start || 30)) / 199 * 100}%`
+                      }}
+                    />
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="199"
+                    value={filters.userCount?.start || 30}
+                    onChange={(e) => {
+                      const newStart = parseInt(e.target.value);
+                      const currentEnd = filters.userCount?.end || 50;
+                      updateUserCount(newStart, Math.max(newStart + 1, currentEnd));
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                    style={{ background: 'transparent' }}
+                  />
+                  <input
+                    type="range"
+                    min="2"
+                    max="200"
+                    value={filters.userCount?.end || 50}
+                    onChange={(e) => {
+                      const newEnd = parseInt(e.target.value);
+                      const currentStart = filters.userCount?.start || 30;
+                      updateUserCount(Math.min(currentStart, newEnd - 1), newEnd);
+                    }}
+                    className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                    style={{ background: 'transparent' }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                    style={{ left: `${((filters.userCount?.start || 30) - 1) / 199 * 100}%` }}
+                  />
+                  <div 
+                    className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                    style={{ left: `${((filters.userCount?.end || 50) - 1) / 199 * 100}%` }}
+                  />
+                </div>
+              </div>
+              
+              {/* 使用人数入力フィールド */}
+              <div className="flex items-center justify-center space-x-3">
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="1"
+                    max="199"
+                    value={filters.userCount?.start || 30}
+                    onChange={(e) => {
+                      const start = Math.max(1, Math.min(199, parseInt(e.target.value) || 30));
+                      const currentEnd = filters.userCount?.end || 50;
+                      updateUserCount(start, Math.max(start + 1, currentEnd));
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">〜</span>
+                <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                  <input
+                    type="number"
+                    min="2"
+                    max="200"
+                    value={filters.userCount?.end || 50}
+                    onChange={(e) => {
+                      const end = Math.max(2, Math.min(200, parseInt(e.target.value) || 50));
+                      updateUserCount(Math.min(end - 1, filters.userCount?.start || 30), end);
+                    }}
+                    className="w-full text-sm text-center bg-transparent outline-none"
+                  />
+                </div>
+                <span className="text-sm text-gray-500">人</span>
+              </div>
+              </div>
+            )}
           </div>
 
           <button 
@@ -591,36 +1053,429 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 )}
               </div>
 
+              {/* モバイル版支払い方法セクション */}
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-3">
-                  価格帯
-                </h4>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="price-mobile"
-                      className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-600">～10万円</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="price-mobile"
-                      className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-600">10万円～50万円</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="price-mobile"
-                      className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-600">50万円～</span>
-                  </label>
+                <button
+                  onClick={() => setPaymentMethodExpanded(!paymentMethodExpanded)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <h4 className="text-sm font-medium text-gray-700">
+                    支払い方法
+                  </h4>
+                  <svg
+                    className={`w-4 h-4 text-gray-500 transition-transform ${paymentMethodExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {paymentMethodExpanded && (
+                  <div className="mt-3 space-y-2">
+                    {paymentMethodList.map(method => (
+                      <label key={method} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filters.paymentMethods.includes(paymentMethodMapping[method])}
+                          onChange={() => togglePaymentMethod(method)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-600">{method} (132)</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* モバイル版面積セクション */}
+              <div>
+                <button
+                  onClick={() => setAreaExpanded(!areaExpanded)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <h4 className="text-sm font-medium text-gray-700">
+                    面積
+                  </h4>
+                  <svg
+                    className={`w-4 h-4 text-gray-500 transition-transform ${areaExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {areaExpanded && (
+                <div className="px-2">
+                  {/* レンジスライダー */}
+                  <div className="mb-4">
+                    <div className="relative">
+                      <div 
+                        className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                        onClick={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const clickX = e.clientX - rect.left;
+                          const trackWidth = rect.width;
+                          const clickPercentage = clickX / trackWidth;
+                          
+                          const clickedArea = Math.round(0 + (clickPercentage * 1000));
+                          const constrainedArea = Math.max(0, Math.min(1000, clickedArea));
+                          
+                          const currentStart = filters.area?.start || 300;
+                          const currentEnd = filters.area?.end || 500;
+                          
+                          const distanceToStart = Math.abs(constrainedArea - currentStart);
+                          const distanceToEnd = Math.abs(constrainedArea - currentEnd);
+                          
+                          if (distanceToStart <= distanceToEnd) {
+                            const newStart = Math.min(constrainedArea, currentEnd - 1);
+                            updateArea(Math.max(0, newStart), currentEnd);
+                          } else {
+                            const newEnd = Math.max(constrainedArea, currentStart + 1);
+                            updateArea(currentStart, Math.min(1000, newEnd));
+                          }
+                        }}
+                      >
+                        <div 
+                          className="h-2 bg-gray-400 rounded-full absolute"
+                          style={{
+                            left: `${((filters.area?.start || 300) - 0) / 1000 * 100}%`,
+                            width: `${((filters.area?.end || 500) - (filters.area?.start || 300)) / 1000 * 100}%`
+                          }}
+                        />
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="999"
+                        value={filters.area?.start || 300}
+                        onChange={(e) => {
+                          const newStart = parseInt(e.target.value);
+                          const currentEnd = filters.area?.end || 500;
+                          updateArea(newStart, Math.max(newStart + 1, currentEnd));
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                        style={{ background: 'transparent' }}
+                      />
+                      <input
+                        type="range"
+                        min="1"
+                        max="1000"
+                        value={filters.area?.end || 500}
+                        onChange={(e) => {
+                          const newEnd = parseInt(e.target.value);
+                          const currentStart = filters.area?.start || 300;
+                          updateArea(Math.min(currentStart, newEnd - 1), newEnd);
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                        style={{ background: 'transparent' }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                        style={{ left: `${((filters.area?.start || 300) - 0) / 1000 * 100}%` }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                        style={{ left: `${((filters.area?.end || 500) - 0) / 1000 * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* 面積入力フィールド */}
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="0"
+                        max="999"
+                        value={filters.area?.start || 300}
+                        onChange={(e) => {
+                          const start = Math.max(0, Math.min(999, parseInt(e.target.value) || 300));
+                          const currentEnd = filters.area?.end || 500;
+                          updateArea(start, Math.max(start + 1, currentEnd));
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">〜</span>
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="1"
+                        max="1000"
+                        value={filters.area?.end || 500}
+                        onChange={(e) => {
+                          const end = Math.max(1, Math.min(1000, parseInt(e.target.value) || 500));
+                          updateArea(Math.min(end - 1, filters.area?.start || 300), end);
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">㎡</span>
+                  </div>
                 </div>
+                )}
+              </div>
+
+              {/* モバイル版天高セクション */}
+              <div>
+                <button
+                  onClick={() => setCeilingHeightExpanded(!ceilingHeightExpanded)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <h4 className="text-sm font-medium text-gray-700">
+                    天高
+                  </h4>
+                  <svg
+                    className={`w-4 h-4 text-gray-500 transition-transform ${ceilingHeightExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {ceilingHeightExpanded && (
+                <div className="px-2">
+                  {/* レンジスライダー */}
+                  <div className="mb-4">
+                    <div className="relative">
+                      <div 
+                        className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                        onClick={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const clickX = e.clientX - rect.left;
+                          const trackWidth = rect.width;
+                          const clickPercentage = clickX / trackWidth;
+                          
+                          const clickedHeight = Math.round(200 + (clickPercentage * 300));
+                          const constrainedHeight = Math.max(200, Math.min(500, clickedHeight));
+                          
+                          const currentStart = filters.ceilingHeight?.start || 250;
+                          const currentEnd = filters.ceilingHeight?.end || 300;
+                          
+                          const distanceToStart = Math.abs(constrainedHeight - currentStart);
+                          const distanceToEnd = Math.abs(constrainedHeight - currentEnd);
+                          
+                          if (distanceToStart <= distanceToEnd) {
+                            const newStart = Math.min(constrainedHeight, currentEnd - 1);
+                            updateCeilingHeight(Math.max(200, newStart), currentEnd);
+                          } else {
+                            const newEnd = Math.max(constrainedHeight, currentStart + 1);
+                            updateCeilingHeight(currentStart, Math.min(500, newEnd));
+                          }
+                        }}
+                      >
+                        <div 
+                          className="h-2 bg-gray-400 rounded-full absolute"
+                          style={{
+                            left: `${((filters.ceilingHeight?.start || 250) - 200) / 300 * 100}%`,
+                            width: `${((filters.ceilingHeight?.end || 300) - (filters.ceilingHeight?.start || 250)) / 300 * 100}%`
+                          }}
+                        />
+                      </div>
+                      <input
+                        type="range"
+                        min="200"
+                        max="499"
+                        value={filters.ceilingHeight?.start || 250}
+                        onChange={(e) => {
+                          const newStart = parseInt(e.target.value);
+                          const currentEnd = filters.ceilingHeight?.end || 300;
+                          updateCeilingHeight(newStart, Math.max(newStart + 1, currentEnd));
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                        style={{ background: 'transparent' }}
+                      />
+                      <input
+                        type="range"
+                        min="201"
+                        max="500"
+                        value={filters.ceilingHeight?.end || 300}
+                        onChange={(e) => {
+                          const newEnd = parseInt(e.target.value);
+                          const currentStart = filters.ceilingHeight?.start || 250;
+                          updateCeilingHeight(Math.min(currentStart, newEnd - 1), newEnd);
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                        style={{ background: 'transparent' }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                        style={{ left: `${((filters.ceilingHeight?.start || 250) - 200) / 300 * 100}%` }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                        style={{ left: `${((filters.ceilingHeight?.end || 300) - 200) / 300 * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* 天高入力フィールド */}
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="200"
+                        max="499"
+                        value={filters.ceilingHeight?.start || 250}
+                        onChange={(e) => {
+                          const start = Math.max(200, Math.min(499, parseInt(e.target.value) || 250));
+                          const currentEnd = filters.ceilingHeight?.end || 300;
+                          updateCeilingHeight(start, Math.max(start + 1, currentEnd));
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">〜</span>
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="201"
+                        max="500"
+                        value={filters.ceilingHeight?.end || 300}
+                        onChange={(e) => {
+                          const end = Math.max(201, Math.min(500, parseInt(e.target.value) || 300));
+                          updateCeilingHeight(Math.min(end - 1, filters.ceilingHeight?.start || 250), end);
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">cm</span>
+                  </div>
+                </div>
+                )}
+              </div>
+
+              {/* モバイル版使用人数セクション */}
+              <div>
+                <button
+                  onClick={() => setUserCountExpanded(!userCountExpanded)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <h4 className="text-sm font-medium text-gray-700">
+                    使用人数
+                  </h4>
+                  <svg
+                    className={`w-4 h-4 text-gray-500 transition-transform ${userCountExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {userCountExpanded && (
+                <div className="px-2">
+                  {/* レンジスライダー */}
+                  <div className="mb-4">
+                    <div className="relative">
+                      <div 
+                        className="h-2 bg-gray-200 rounded-full cursor-pointer"
+                        onClick={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const clickX = e.clientX - rect.left;
+                          const trackWidth = rect.width;
+                          const clickPercentage = clickX / trackWidth;
+                          
+                          const clickedCount = Math.round(1 + (clickPercentage * 199));
+                          const constrainedCount = Math.max(1, Math.min(200, clickedCount));
+                          
+                          const currentStart = filters.userCount?.start || 30;
+                          const currentEnd = filters.userCount?.end || 50;
+                          
+                          const distanceToStart = Math.abs(constrainedCount - currentStart);
+                          const distanceToEnd = Math.abs(constrainedCount - currentEnd);
+                          
+                          if (distanceToStart <= distanceToEnd) {
+                            const newStart = Math.min(constrainedCount, currentEnd - 1);
+                            updateUserCount(Math.max(1, newStart), currentEnd);
+                          } else {
+                            const newEnd = Math.max(constrainedCount, currentStart + 1);
+                            updateUserCount(currentStart, Math.min(200, newEnd));
+                          }
+                        }}
+                      >
+                        <div 
+                          className="h-2 bg-gray-400 rounded-full absolute"
+                          style={{
+                            left: `${((filters.userCount?.start || 30) - 1) / 199 * 100}%`,
+                            width: `${((filters.userCount?.end || 50) - (filters.userCount?.start || 30)) / 199 * 100}%`
+                          }}
+                        />
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="199"
+                        value={filters.userCount?.start || 30}
+                        onChange={(e) => {
+                          const newStart = parseInt(e.target.value);
+                          const currentEnd = filters.userCount?.end || 50;
+                          updateUserCount(newStart, Math.max(newStart + 1, currentEnd));
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-10 pointer-events-auto"
+                        style={{ background: 'transparent' }}
+                      />
+                      <input
+                        type="range"
+                        min="2"
+                        max="200"
+                        value={filters.userCount?.end || 50}
+                        onChange={(e) => {
+                          const newEnd = parseInt(e.target.value);
+                          const currentStart = filters.userCount?.start || 30;
+                          updateUserCount(Math.min(currentStart, newEnd - 1), newEnd);
+                        }}
+                        className="absolute top-0 h-2 w-full opacity-0 cursor-pointer z-20 pointer-events-auto"
+                        style={{ background: 'transparent' }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                        style={{ left: `${((filters.userCount?.start || 30) - 1) / 199 * 100}%` }}
+                      />
+                      <div 
+                        className="absolute w-3 h-3 bg-gray-500 rounded-full -top-0.5 transform -translate-x-1.5 z-30 pointer-events-none"
+                        style={{ left: `${((filters.userCount?.end || 50) - 1) / 199 * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* 使用人数入力フィールド */}
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="1"
+                        max="199"
+                        value={filters.userCount?.start || 30}
+                        onChange={(e) => {
+                          const start = Math.max(1, Math.min(199, parseInt(e.target.value) || 30));
+                          const currentEnd = filters.userCount?.end || 50;
+                          updateUserCount(start, Math.max(start + 1, currentEnd));
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">〜</span>
+                    <div className="flex items-center border border-gray-300 rounded px-3 py-1.5 w-20">
+                      <input
+                        type="number"
+                        min="2"
+                        max="200"
+                        value={filters.userCount?.end || 50}
+                        onChange={(e) => {
+                          const end = Math.max(2, Math.min(200, parseInt(e.target.value) || 50));
+                          updateUserCount(Math.min(end - 1, filters.userCount?.start || 30), end);
+                        }}
+                        className="w-full text-sm text-center bg-transparent outline-none"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">人</span>
+                  </div>
+                </div>
+                )}
               </div>
             </div>
 

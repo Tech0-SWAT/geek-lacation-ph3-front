@@ -5,18 +5,24 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 export type Filters = {
   categories: string[];
   places: string[];
-  price: string | null;
   equipment: string[];
   usageTime: { start: number; end: number } | null;
+  paymentMethods: string[];
+  area: { start: number; end: number } | null;
+  ceilingHeight: { start: number; end: number } | null;
+  userCount: { start: number; end: number } | null;
 };
 
 // コンテキストの初期値
 const initial: Filters = {
   categories: [],
   places: [],
-  price: null,
   equipment: [], 
   usageTime: null,
+  paymentMethods: [],
+  area: null,
+  ceilingHeight: null,
+  userCount: null,
 };
 const initialFetchedData: any[] = [];
 
