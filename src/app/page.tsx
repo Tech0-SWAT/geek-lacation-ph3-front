@@ -107,11 +107,20 @@ export default function Home() {
       });
   
       const data = await res.json();
-      console.log("✅ 初期データ取得:", data);
-      setInitialFetchData(data.results); // ← .results がある前提
-      console.log("✅  setInitialFetchData:", data.results);
+      console.log("✅ 初期データ取得:", data.results);
+      const newArray = data.results.map((item: any) => ({
+        id: item.location_id,
+        name: item.name,
+        address: item.address,
+        tel: item.tel,
+        mail: item.mail,
+        categories: item.categories ?? [],
+        images: item.images ?? [],
+      }));
+      setInitialFetchData(newArray); // ← .results がある前提
+      console.log("✅  setInitialFetchData:", newArray);
 
-      setFetchedData(data.results); 
+      setFetchedData(newArray); 
     } catch (error) {
       console.error("❌ Fetch error:", error);
     } finally {
@@ -152,6 +161,7 @@ export default function Home() {
   
       if (data.results) {
         const newArray = data.results.map((item: any) => ({
+          id: item.location_id,
           name: item.name,
           address: item.address,
           tel: item.tel,
