@@ -6,6 +6,7 @@ import { useFilter } from '@/app/context/FilterContext';
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  onIntegratedSearch: () => void;
   // className?: string;
 }
 
@@ -50,7 +51,7 @@ const paymentMethodMapping: Record<string, string> = {
 };
 
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegratedSearch }) => {
   const { filters, setFilters, resetFilters } = useFilter();
   const [equipmentExpanded, setEquipmentExpanded] = React.useState(true);
   const [usageTimeExpanded, setUsageTimeExpanded] = React.useState(true);
@@ -956,9 +957,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             フィルターをリセット
           </button>
           <button
-              onClick={() => {
-                /* 検索処理呼び出し */
-              }}
+              onClick={onIntegratedSearch}
               className="
                 mt-4
                 w-full
@@ -1775,14 +1774,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             </button>
 
             <button
-              onClick={() => {
-                /* 検索処理呼び出し */
-              }}
+              onClick={onIntegratedSearch}
               className="
                 mt-4
                 w-full
                 py-3
-                bg-gray-800 text-black
+                bg-gray-800 text-white
                 text-center
                 rounded-lg
                 hover:bg-gray-700

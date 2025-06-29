@@ -169,6 +169,59 @@ export default function Home() {
     }
   };
 
+  // Search_boxとSidebarの状態を統合した検索関数
+  const handleIntegratedSearch = async () => {
+    try {
+      const endpointURL = "api/get_information_by_query";
+      
+      // 基本的なbodyData（現在のquerySearchと同じ形式）
+      const bodyData = {
+        keyword: "大浜海岸",  // 現在は空文字列（後で拡張可能）
+        categories: [],  // 現在は空配列（後で拡張可能）
+        area: [],  // 現在は空配列（後で拡張可能）
+        price_day: [null, null],  // 現在は空（後で拡張可能）
+        price_hour: [null, null],  // 現在は空（後で拡張可能）
+        
+        // Sidebarフィルターを追加
+        equipment: filters.equipment ?? [],
+        usageTime: filters.usageTime,
+        paymentMethods: filters.paymentMethods ?? [],
+        spaceArea: filters.area,
+        ceilingHeight: filters.ceilingHeight,
+        userCount: filters.userCount,
+      };
+  
+      console.log("Integrated search request body:", bodyData);
+  
+      const res = await fetch(endpointURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await res.json();
+      console.log("Integrated search API response:", data);
+  
+      if (data.results) {
+        const newArray = data.results.map((item: any) => ({
+          name: item.name,
+          address: item.address,
+          tel: item.tel,
+          mail: item.mail,
+          categories: item.categories ?? [],
+          images: item.images ?? [], 
+        }));
+        setDisplayData(newArray);
+        setFetchedData(data.results); 
+      } else {
+        console.warn("No results returned from integrated search");
+        setDisplayData([]);
+      }
+    } catch (error) {
+      console.error("Integrated search error:", error);
+    }
+  };
+
 
   useEffect(() => {
     if (initialFetchData && Array.isArray(initialFetchData) && initialFetchData.length > 0 && displayData.length === 0) {
@@ -207,6 +260,7 @@ export default function Home() {
           images={displayData} 
           isSidebarOpen={isSidebarOpen} 
           onToggleSidebar={toggleSidebar} 
+          onIntegratedSearch={handleIntegratedSearch}
         />
         <Footer />
       </div>
