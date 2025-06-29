@@ -55,6 +55,26 @@ export const categoryList = [
     "神社仏閣",
     "オープンスペース",
     "夜景/イルミネーション",
-    "該当なし",
-    "その他"
-  ];
+    "該当なし"
+    ];
+
+  const categoryGroupHeaders = [
+  "ハウススタジオ", "オフィス", "商業施設", "学校", "病院",
+  "店舗", "飲食店", "自然", "その他"
+]
+
+// 👇 自動的にグループ構造へ変換
+export const categoryGroups = (() => {
+  const groups: { group: string, items: string[] }[] = []
+  let currentGroup: { group: string, items: string[] } | null = null
+
+  for (const item of categoryList) {
+    if (categoryGroupHeaders.includes(item)) {
+      currentGroup = { group: item, items: [] }
+      groups.push(currentGroup)
+    } else if (currentGroup) {
+      currentGroup.items.push(item)
+    }
+  }
+  return groups
+})()
