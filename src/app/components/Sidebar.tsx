@@ -44,10 +44,10 @@ const paymentMethodList = [
 
 // 日本語支払い方法名とキーのマッピング
 const paymentMethodMapping: Record<string, string> = {
-  "カード": "card",
-  "その他": "other",
-  "現金": "cash",
-  "請求書": "invoice",
+  "カード": "カード",
+  "その他": "その他",
+  "現金": "現金",
+  "請求書": "請求書",
 };
 
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {

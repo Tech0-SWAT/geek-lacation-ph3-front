@@ -26,7 +26,7 @@ export default function Home() {
   );
 
   // コンテキストを取得
-  const { filters, fetchedData, setFetchedData  } = useFilter()  
+  const { filters, setFilters, fetchedData, setFetchedData  } = useFilter()  
   useEffect(() => {
     // フィルター値が変わるたびにログ出力
     console.log('現在のフィルター状態:', filters)
@@ -135,17 +135,28 @@ export default function Home() {
     // 検索が実行されたことを記録
     setHasUserSearched(true);
     
+    // 🔧 検索実行前にFilterContextに引数を同期
+    setFilters(prev => ({
+      ...prev,
+      keyword: keyword,
+      categories: tags.categories,
+      locations: tags.area,
+      price_day: tags.price_day.length === 2 ? [tags.price_day[0], tags.price_day[1]] : [null, null],
+      price_hour: tags.price_hour.length === 2 ? [tags.price_hour[0], tags.price_hour[1]] : [null, null],
+    }));
+    
     try {
       const endpointURL = "api/get_information_by_query";
-      // FilterContextからデータを取得（handleIntegratedSearchと同じ構造）
+      // 混合アプローチ: Search_box/Middlebar由来は引数、Sidebar由来はFilterContext
       const bodyData = {
-        keyword: filters.keyword || "",  // FilterContextからキーワードを取得
-        categories: filters.categories || [],  // FilterContextからカテゴリを取得
-        area: filters.locations || [],  // FilterContextから地域を取得
-        price_day: filters.price_day || [null, null],  // FilterContextから価格（日）を取得
-        price_hour: filters.price_hour || [null, null],  // FilterContextから価格（時）を取得
+        // Search_box/Middlebar由来: 引数を直接使用（確実性）
+        keyword: keyword,
+        categories: tags.categories || [],
+        area: tags.area || [],
+        price_day: tags.price_day.length === 2 ? tags.price_day : [null, null],
+        price_hour: tags.price_hour.length === 2 ? tags.price_hour : [null, null],
         
-        // Sidebarフィルターを追加（API仕様に合わせた名前）
+        // Sidebar由来: FilterContextから取得（統合検索）
         facilities: filters.equipment ?? [],
         userCount: filters.userCount,
         usageTime: filters.usageTime,
