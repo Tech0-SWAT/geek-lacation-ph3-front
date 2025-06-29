@@ -45,10 +45,10 @@ const paymentMethodList = [
 
 // 日本語支払い方法名とキーのマッピング
 const paymentMethodMapping: Record<string, string> = {
-  "カード": "card",
-  "その他": "other",
-  "現金": "cash",
-  "請求書": "invoice",
+  "カード": "カード",
+  "その他": "その他",
+  "現金": "現金",
+  "請求書": "請求書",
 };
 
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
@@ -833,7 +833,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                 {filters.userCount === null ? (
                   /* 空状態UI */
                   <div className="text-center py-6">
-                   <button 
+
+                    <button 
                       onClick={initializeUserCount}
                       className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                     >
@@ -1654,11 +1655,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                   {filters.userCount === null ? (
                     /* モバイル版空状態UI */
                     <div className="text-center py-6">
-                      <p className="text-sm text-gray-500 mb-3">使用人数を選択してください</p>
+                      <p className="text-sm text-gray-500 mb-3">現在この機能は利用できません</p>
                       <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                       <button 
-                        onClick={initializeUserCount}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+                        disabled={true}
+                        className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
                       >
                         使用人数で検索
                       </button>

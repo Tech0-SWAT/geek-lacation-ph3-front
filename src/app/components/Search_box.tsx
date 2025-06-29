@@ -62,31 +62,15 @@ export default function Search({ onSearch }: SearchProps) {
   
     onSearch(searchedKeyword, middlebarTags);
     setPrevSearch({ keyword: searchedKeyword, tags: middlebarTags });
-    // FilterContextにも全データを同期
-    setFilters(prev => ({ 
-      ...prev, 
-      keyword: searchedKeyword,
-      categories: middlebarTags.categories,
-      locations: middlebarTags.area,
-      price_day: middlebarTags.price_day.length === 2 ? [middlebarTags.price_day[0], middlebarTags.price_day[1]] : [null, null],
-      price_hour: middlebarTags.price_hour.length === 2 ? [middlebarTags.price_hour[0], middlebarTags.price_hour[1]] : [null, null],
-    }));
-  }, [middlebarTags, searchedKeyword, hasUserChanged, onSearch, setFilters]);
+    // FilterContext同期はquerySearch内で実行されるため、ここでは不要
+  }, [middlebarTags, searchedKeyword, hasUserChanged, onSearch]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     // 検索ボタン押下時は、現在の入力値を使って検索し、保持する
     onSearch(keyword, middlebarTags);
     setSearchedKeyword(keyword);
-    // FilterContextにも全データを同期
-    setFilters(prev => ({ 
-      ...prev, 
-      keyword: keyword,
-      categories: middlebarTags.categories,
-      locations: middlebarTags.area,
-      price_day: middlebarTags.price_day.length === 2 ? [middlebarTags.price_day[0], middlebarTags.price_day[1]] : [null, null],
-      price_hour: middlebarTags.price_hour.length === 2 ? [middlebarTags.price_hour[0], middlebarTags.price_hour[1]] : [null, null],
-    }));
+    // FilterContext同期はquerySearch内で実行されるため、ここでは不要
   };
 
   const handleTagsChange = useCallback((tags: {

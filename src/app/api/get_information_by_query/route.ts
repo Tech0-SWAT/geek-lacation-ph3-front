@@ -37,10 +37,10 @@ export async function POST(request: Request) {
     // 金額（時間単位）
     if (Array.isArray(body.price_hour)) {
       if (body.price_hour[0] != null) {
-        params.append("price_hour_min", String(body.price_hour[0]));
+        params.append("price_hour_min", String(body.price_hour[0]*10000));
       }
       if (body.price_hour[1] != null) {
-        params.append("price_hour_max", String(body.price_hour[1]));
+        params.append("price_hour_max", String(body.price_hour[1]*10000));
       }
     }
 

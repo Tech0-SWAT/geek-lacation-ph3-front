@@ -11,6 +11,7 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
     "@azure/storage-blob": "^12.26.0",
+    "@react-google-maps/api": "^2.20.7",
     "bcryptjs": "^2.4.3",
     "firebase": "^10.7.1",
     "next": "^14",

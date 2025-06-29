@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { FaBuilding, FaPhoneAlt, FaEnvelope } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
 
 type ImageType = {
   url: string
@@ -9,6 +10,7 @@ type ImageType = {
 }
 
 type LocationCardProps = {
+  id: number
   name: string
   address: string
   tel?: string
@@ -18,6 +20,7 @@ type LocationCardProps = {
 }
 
 export default function LocationCard({
+  id,
   name = '',
   address = '',
   tel,
@@ -26,10 +29,17 @@ export default function LocationCard({
   images = [],
 }: LocationCardProps) {
   const[mainIndex, setMainIndex] = useState(0)
+  const router = useRouter()
+  
+  const handleClick = () => {
+    router.push(`/location/${id}`)  // ← idで遷移
+  }
   // console.log("🎯 LocationCard images:", images)
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 w-[360px] overflow-hidden">
-
+    <div
+          className="bg-white rounded-2xl shadow-md p-4 w-[360px] overflow-hidden cursor-pointer hover:shadow-lg transition"
+          onClick={handleClick}
+        >
       {/* メイン画像 */}
       <div className="w-full aspect-[16/9] relative overflow-hidden">
       
