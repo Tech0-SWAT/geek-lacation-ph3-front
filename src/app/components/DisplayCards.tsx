@@ -33,9 +33,10 @@ interface DisplayCardsProps {
   images: any[];
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
+  onIntegratedSearch: () => void;
 }
 
-export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar }: DisplayCardsProps) {
+export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar, onIntegratedSearch }: DisplayCardsProps) {
   // const datalist = dummyData
   const { fetchedData } = useFilter();
   console.log("Displaycardsで読んでいるコンテキストの fetchedData:", fetchedData);
@@ -70,12 +71,12 @@ export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar }:
   };
 
   return (
-    <div className="pt-[80px] bg-[#F2F6F9]">
+    <div className="pt-[80px] bg-[#F9F8F2]">
       {/* フレックスレイアウトでサイドバーとカードエリアを横並び配置 */}
       <div className="flex w-full">
         {/* デスクトップ版サイドバー */}
         <div className="hidden lg:block bg-white rounded-r-3xl mb-12 shadow-lg">
-          <Sidebar isOpen={isSidebarOpen} onToggle={onToggleSidebar} />
+          <Sidebar isOpen={isSidebarOpen} onToggle={onToggleSidebar} onIntegratedSearch={onIntegratedSearch} />
         </div>
         
         {/* カードエリア */}
@@ -115,7 +116,7 @@ export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar }:
         
         {/* モバイル版サイドバー（従来通り） */}
         <div className="lg:hidden">
-          <Sidebar isOpen={isSidebarOpen} onToggle={onToggleSidebar} />
+          <Sidebar isOpen={isSidebarOpen} onToggle={onToggleSidebar} onIntegratedSearch={onIntegratedSearch} />
         </div>
       </div>
     </div>

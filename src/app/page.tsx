@@ -26,7 +26,7 @@ export default function Home() {
   );
 
   // コンテキストを取得
-  const { filters, fetchedData, setFetchedData  } = useFilter()  
+  const { filters, setFilters, fetchedData, setFetchedData  } = useFilter()  
   useEffect(() => {
     // フィルター値が変わるたびにログ出力
     console.log('現在のフィルター状態:', filters)
@@ -49,6 +49,8 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // 初回実行済みかを判定するためのref
   const hasSearched = useRef(false);
+  // 検索が実行されたかどうかを追跡する状態
+  const [hasUserSearched, setHasUserSearched] = useState(false);
 
   // サイドバーのトグル関数（モバイル用）
   const toggleSidebar = () => {
@@ -63,16 +65,17 @@ export default function Home() {
     }
   }, [isInitialDataFetched]);
 
-    // 初期データが取得できていて、まだ表示データが空のときに反映する
+    // 初期データが取得できていて、まだ表示データが空のときに反映する（検索が実行されていない場合のみ）
     useEffect(() => {
       if (
         Array.isArray(initialFetchData) &&
         initialFetchData.length > 0 &&
-        displayData.length === 0
+        displayData.length === 0 &&
+        !hasUserSearched
       ) {
         setDisplayData(initialFetchData);
       }
-    }, [initialFetchData, displayData]);
+    }, [initialFetchData, displayData, hasUserSearched]);
 
   // //ログイン導入時
   // useEffect(() => {
@@ -138,17 +141,40 @@ export default function Home() {
       price_hour: number[];
     }
   ) => {
+    // 検索が実行されたことを記録
+    setHasUserSearched(true);
+    
+    // 🔧 検索実行前にFilterContextに引数を同期
+    setFilters(prev => ({
+      ...prev,
+      keyword: keyword,
+      categories: tags.categories,
+      locations: tags.area,
+      price_day: tags.price_day.length === 2 ? [tags.price_day[0], tags.price_day[1]] : [null, null],
+      price_hour: tags.price_hour.length === 2 ? [tags.price_hour[0], tags.price_hour[1]] : [null, null],
+    }));
+    
     try {
       const endpointURL = "api/get_information_by_query";
+      // 混合アプローチ: Search_box/Middlebar由来は引数、Sidebar由来はFilterContext
       const bodyData = {
+        // Search_box/Middlebar由来: 引数を直接使用（確実性）
         keyword: keyword,
-        categories: tags.categories ?? [],
-        area: tags.area ?? [],
+        categories: tags.categories || [],
+        area: tags.area || [],
         price_day: tags.price_day.length === 2 ? tags.price_day : [null, null],
         price_hour: tags.price_hour.length === 2 ? tags.price_hour : [null, null],
+        
+        // Sidebar由来: FilterContextから取得（統合検索）
+        facilities: filters.equipment ?? [],
+        userCount: filters.userCount,
+        usageTime: filters.usageTime,
+        spaceArea: filters.area,
+        ceilingHeight: filters.ceilingHeight,
+        payment_method: filters.paymentMethods ?? [],
       };
   
-      console.log("Request body:", bodyData);
+      console.log("querySearch Request body:", bodyData);
   
       const res = await fetch(endpointURL, {
         method: "POST",
@@ -179,12 +205,75 @@ export default function Home() {
     }
   };
 
+  // Search_boxとSidebarの状態を統合した検索関数
+  const handleIntegratedSearch = async () => {
+    // 検索が実行されたことを記録
+    setHasUserSearched(true);
+    
+    try {
+      const endpointURL = "api/get_information_by_query";
+      // const bodyData = {
+      //   keyword: keyword,
+      //   categories: tags.categories ?? [],
+      //   area: tags.area ?? [],
+      //   price_day: tags.price_day.length === 2 ? tags.price_day : [null, null],
+      //   price_hour: tags.price_hour.length === 2 ? tags.price_hour : [null, null],
+      // };
+      
+      // 基本的なbodyData（FilterContextから取得）
+      const bodyData = {
+        keyword: filters.keyword || "",  // FilterContextからキーワードを取得
+        categories: filters.categories || [],  // FilterContextからカテゴリを取得
+        area: filters.locations || [],  // FilterContextから地域を取得
+        price_day: filters.price_day || [null, null],  // FilterContextから価格（日）を取得
+        price_hour: filters.price_hour || [null, null],  // FilterContextから価格（時）を取得
+        
+        // Sidebarフィルターを追加（API仕様に合わせた名前）
+        facilities: filters.equipment ?? [],
+        userCount: filters.userCount,
+        usageTime: filters.usageTime,
+        spaceArea: filters.area,
+        ceilingHeight: filters.ceilingHeight,
+        payment_method: filters.paymentMethods ?? [],
+      };
+  
+      console.log("Integrated search request body:", bodyData);
+  
+      const res = await fetch(endpointURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
+  
+      const data = await res.json();
+      console.log("Integrated search API response:", data);
+  
+      if (data.results) {
+        const newArray = data.results.map((item: any) => ({
+          name: item.name,
+          address: item.address,
+          tel: item.tel,
+          mail: item.mail,
+          categories: item.categories ?? [],
+          images: item.images ?? [], 
+        }));
+        setDisplayData(newArray);
+        setFetchedData(data.results); 
+      } else {
+        console.warn("No results returned from integrated search");
+        setDisplayData([]);
+      }
+    } catch (error) {
+      console.error("Integrated search error:", error);
+    }
+  };
+
 
   useEffect(() => {
-    if (initialFetchData && Array.isArray(initialFetchData) && initialFetchData.length > 0 && displayData.length === 0) {
+    if (initialFetchData && Array.isArray(initialFetchData) && initialFetchData.length > 0 && displayData.length === 0 && !hasUserSearched) {
       setDisplayData(initialFetchData);
     }
-  }, [initialFetchData]);
+  }, [initialFetchData, hasUserSearched]);
 
 
   // ローディング中ならスピナーを表示
@@ -217,6 +306,7 @@ export default function Home() {
           images={displayData} 
           isSidebarOpen={isSidebarOpen} 
           onToggleSidebar={toggleSidebar} 
+          onIntegratedSearch={handleIntegratedSearch}
         />
         <Footer />
       </div>

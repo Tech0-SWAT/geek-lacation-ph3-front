@@ -6,6 +6,7 @@ import { useFilter } from '@/app/context/FilterContext';
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  onIntegratedSearch: () => void;
   // className?: string;
 }
 
@@ -43,14 +44,14 @@ const paymentMethodList = [
 
 // 日本語支払い方法名とキーのマッピング
 const paymentMethodMapping: Record<string, string> = {
-  "カード": "card",
-  "その他": "other",
-  "現金": "cash",
-  "請求書": "invoice",
+  "カード": "カード",
+  "その他": "その他",
+  "現金": "現金",
+  "請求書": "請求書",
 };
 
 // export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, className = "" }) => {
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegratedSearch }) => {
   const { filters, setFilters, resetFilters } = useFilter();
   const [equipmentExpanded, setEquipmentExpanded] = React.useState(true);
   const [usageTimeExpanded, setUsageTimeExpanded] = React.useState(true);
@@ -279,7 +280,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                       onChange={() => toggleEquipment(eq)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="ml-2 text-sm text-gray-600">{eq} (132)</span>
+                    <span className="ml-2 text-sm text-gray-600">{eq} </span>
                   </label>
                 ))}
               </div>
@@ -471,7 +472,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                       onChange={() => togglePaymentMethod(method)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="ml-2 text-sm text-gray-600">{method} (132)</span>
+                    <span className="ml-2 text-sm text-gray-600">{method} </span>
                   </label>
                 ))}
               </div>
@@ -818,8 +819,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                     <p className="text-sm text-gray-500 mb-3">使用人数を選択してください</p>
                     <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                     <button 
-                      onClick={initializeUserCount}
-                      className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+                      disabled={true}
+                      className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
                     >
                       使用人数を選択
                     </button>
@@ -956,9 +957,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             フィルターをリセット
           </button>
           <button
-              onClick={() => {
-                /* 検索処理呼び出し */
-              }}
+              onClick={onIntegratedSearch}
               className="
                 mt-4
                 w-full
@@ -1096,7 +1095,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                           onChange={() => toggleEquipment(eq)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-600">{eq} (132)</span>
+                        <span className="ml-2 text-sm text-gray-600">{eq} </span>
                       </label>
                     ))}
                   </div>
@@ -1288,7 +1287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                           onChange={() => togglePaymentMethod(method)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-600">{method} (132)</span>
+                        <span className="ml-2 text-sm text-gray-600">{method} </span>
                       </label>
                     ))}
                   </div>
@@ -1632,11 +1631,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   {filters.userCount === null ? (
                     /* モバイル版空状態UI */
                     <div className="text-center py-6">
-                      <p className="text-sm text-gray-500 mb-3">使用人数を選択してください</p>
+                      <p className="text-sm text-gray-500 mb-3">現在この機能は利用できません</p>
                       <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                       <button 
-                        onClick={initializeUserCount}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+                        disabled={true}
+                        className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
                       >
                         使用人数を選択
                       </button>
@@ -1775,14 +1774,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             </button>
 
             <button
-              onClick={() => {
-                /* 検索処理呼び出し */
-              }}
+              onClick={onIntegratedSearch}
               className="
                 mt-4
                 w-full
                 py-3
-                bg-gray-800 text-black
+                bg-gray-800 text-white
                 text-center
                 rounded-lg
                 hover:bg-gray-700
