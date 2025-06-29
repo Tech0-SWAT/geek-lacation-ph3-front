@@ -49,6 +49,8 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // 初回実行済みかを判定するためのref
   const hasSearched = useRef(false);
+  // 検索が実行されたかどうかを追跡する状態
+  const [hasUserSearched, setHasUserSearched] = useState(false);
 
   // サイドバーのトグル関数（モバイル用）
   const toggleSidebar = () => {
@@ -63,16 +65,17 @@ export default function Home() {
     }
   }, [isInitialDataFetched]);
 
-    // 初期データが取得できていて、まだ表示データが空のときに反映する
+    // 初期データが取得できていて、まだ表示データが空のときに反映する（検索が実行されていない場合のみ）
     useEffect(() => {
       if (
         Array.isArray(initialFetchData) &&
         initialFetchData.length > 0 &&
-        displayData.length === 0
+        displayData.length === 0 &&
+        !hasUserSearched
       ) {
         setDisplayData(initialFetchData);
       }
-    }, [initialFetchData, displayData]);
+    }, [initialFetchData, displayData, hasUserSearched]);
 
   // //ログイン導入時
   // useEffect(() => {
@@ -129,6 +132,9 @@ export default function Home() {
       price_hour: number[];
     }
   ) => {
+    // 検索が実行されたことを記録
+    setHasUserSearched(true);
+    
     try {
       const endpointURL = "api/get_information_by_query";
       const bodyData = {
@@ -171,6 +177,9 @@ export default function Home() {
 
   // Search_boxとSidebarの状態を統合した検索関数
   const handleIntegratedSearch = async () => {
+    // 検索が実行されたことを記録
+    setHasUserSearched(true);
+    
     try {
       const endpointURL = "api/get_information_by_query";
       
@@ -224,10 +233,10 @@ export default function Home() {
 
 
   useEffect(() => {
-    if (initialFetchData && Array.isArray(initialFetchData) && initialFetchData.length > 0 && displayData.length === 0) {
+    if (initialFetchData && Array.isArray(initialFetchData) && initialFetchData.length > 0 && displayData.length === 0 && !hasUserSearched) {
       setDisplayData(initialFetchData);
     }
-  }, [initialFetchData]);
+  }, [initialFetchData, hasUserSearched]);
 
 
   // ローディング中ならスピナーを表示
