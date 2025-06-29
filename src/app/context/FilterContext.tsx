@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // フィルターに使う型定義
 export type Filters = {
+  keyword: string;
   categories: string[];
   places: string[];
   equipment: string[];
@@ -15,6 +16,7 @@ export type Filters = {
 
 // コンテキストの初期値
 const initial: Filters = {
+  keyword: "",
   categories: [],
   places: [],
   equipment: [], 

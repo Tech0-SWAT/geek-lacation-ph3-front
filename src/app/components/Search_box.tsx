@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import Middlebar from './Middlebar';
+import { useFilter } from '@/app/context/FilterContext';
 
 interface SearchProps {
   onSearch: (
@@ -15,6 +16,8 @@ interface SearchProps {
 }
 
 export default function Search({ onSearch }: SearchProps) {
+  const { filters, setFilters } = useFilter();
+  
   // テキスト入力の値を管理する状態
   const [keyword, setKeyword] = useState("");
   // 最後にユーザーが検索したキーワードを保持する
@@ -59,13 +62,17 @@ export default function Search({ onSearch }: SearchProps) {
   
     onSearch(searchedKeyword, middlebarTags);
     setPrevSearch({ keyword: searchedKeyword, tags: middlebarTags });
-  }, [middlebarTags, searchedKeyword, hasUserChanged, onSearch]);
+    // FilterContextにもキーワードを同期
+    setFilters(prev => ({ ...prev, keyword: searchedKeyword }));
+  }, [middlebarTags, searchedKeyword, hasUserChanged, onSearch, setFilters]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     // 検索ボタン押下時は、現在の入力値を使って検索し、保持する
     onSearch(keyword, middlebarTags);
     setSearchedKeyword(keyword);
+    // FilterContextにもキーワードを同期
+    setFilters(prev => ({ ...prev, keyword: keyword }));
   };
 
   const handleTagsChange = useCallback((tags: {
@@ -87,6 +94,8 @@ export default function Search({ onSearch }: SearchProps) {
       price_day: [],
       price_hour: [],
     });
+    // FilterContextのキーワードもクリア
+    setFilters(prev => ({ ...prev, keyword: "" }));
   };
 
   return (

@@ -176,7 +176,7 @@ export default function Home() {
       
       // 基本的なbodyData（現在のquerySearchと同じ形式）
       const bodyData = {
-        keyword: "",  // 現在は空文字列（後で拡張可能）
+        keyword: filters.keyword || "",  // FilterContextからキーワードを取得
         categories: [],  // 現在は空配列（後で拡張可能）
         area: [],  // 現在は空配列（後で拡張可能）
         price_day: [null, null],  // 現在は空（後で拡張可能）
