@@ -137,15 +137,24 @@ export default function Home() {
     
     try {
       const endpointURL = "api/get_information_by_query";
+      // FilterContextからデータを取得（handleIntegratedSearchと同じ構造）
       const bodyData = {
-        keyword: keyword,
-        categories: tags.categories ?? [],
-        area: tags.area ?? [],
-        price_day: tags.price_day.length === 2 ? tags.price_day : [null, null],
-        price_hour: tags.price_hour.length === 2 ? tags.price_hour : [null, null],
+        keyword: filters.keyword || "",  // FilterContextからキーワードを取得
+        categories: filters.categories || [],  // FilterContextからカテゴリを取得
+        area: filters.locations || [],  // FilterContextから地域を取得
+        price_day: filters.price_day || [null, null],  // FilterContextから価格（日）を取得
+        price_hour: filters.price_hour || [null, null],  // FilterContextから価格（時）を取得
+        
+        // Sidebarフィルターを追加（API仕様に合わせた名前）
+        facilities: filters.equipment ?? [],
+        userCount: filters.userCount,
+        usageTime: filters.usageTime,
+        spaceArea: filters.area,
+        ceilingHeight: filters.ceilingHeight,
+        payment_method: filters.paymentMethods ?? [],
       };
   
-      console.log("Request body:", bodyData);
+      console.log("querySearch Request body:", bodyData);
   
       const res = await fetch(endpointURL, {
         method: "POST",
@@ -182,6 +191,13 @@ export default function Home() {
     
     try {
       const endpointURL = "api/get_information_by_query";
+      // const bodyData = {
+      //   keyword: keyword,
+      //   categories: tags.categories ?? [],
+      //   area: tags.area ?? [],
+      //   price_day: tags.price_day.length === 2 ? tags.price_day : [null, null],
+      //   price_hour: tags.price_hour.length === 2 ? tags.price_hour : [null, null],
+      // };
       
       // 基本的なbodyData（FilterContextから取得）
       const bodyData = {
