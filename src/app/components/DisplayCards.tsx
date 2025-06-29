@@ -70,7 +70,7 @@ export default function DisplayCards({ images, isSidebarOpen, onToggleSidebar, o
   };
 
   return (
-    <div className="pt-[80px] bg-[#F2F6F9]">
+    <div className="pt-[80px] bg-[#F9F8F2]">
       {/* フレックスレイアウトでサイドバーとカードエリアを横並び配置 */}
       <div className="flex w-full">
         {/* デスクトップ版サイドバー */}
