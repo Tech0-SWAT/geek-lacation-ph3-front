@@ -50,8 +50,8 @@ export const LocationDetailInfoSection = ({
         <LocationPriceCard data={data} />
       )}
       {/* 設備 */}
-      {locationTab === "equipment" && (
-        <LocationEquipmentCard data={data} />
+      {locationTab === "equipment" && data?.facility && (
+        <LocationEquipmentCard data={{ ...data.facility, ...data }} />
       )}
       {/* オプション */}
       {locationTab === "option" && (

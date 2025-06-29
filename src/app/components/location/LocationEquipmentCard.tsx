@@ -1,27 +1,33 @@
-import { formatBooleanCircle, formatAvailable, formatNecessary, formatTimeRange, noDataPlaceholder } from "../../../utils/format";
 import { InfoCard } from "@/app/components/common/InfoCard";
-import { locationTabLabels, LocationTabType } from "../../types/location";
+import { locationTabLabels } from "../../types/location";
 
 type LocationEquipmentCardProps = {
   data: {
-    parking?: { count?: number; available?: boolean };
-    elevator?: { available?: boolean };
-    kitchen?: { available?: boolean };
-    makeup_room?: { available?: boolean; remark?: string };
-    protection?: string;
-    electricity_capacity?: { capacity?: string; remark?: string };
-    power_supply?: boolean;
-    generator?: boolean;
-    lighting_outside?: { available?: boolean; remark?: string };
-    recording?: { available?: boolean; remark?: string };
-    internet?: { wifi?: boolean; wired?: boolean; available?: boolean };
-    remark?: string;
-  }
-}
+    has_parking?: boolean;
+    elevator?: boolean | null;
+    kitchen?: boolean;
+    power_car?: boolean;
+    protection?: boolean | null;
+    electric_available?: boolean;
+    electric_capacity?: string | null;
+    special_equipment?: boolean;
+    sound_recording_ok?: boolean;
+    fire_usage?: boolean;
+    extra_notes?: string | null;
+    capacity?: number | null;
+    payment_method?: string | null;
+    remarks?: string | null;
+  };
+};
 
-export const LocationEquipmentCard = ({
-  data,
-}: LocationEquipmentCardProps) => {
+const displayBoolean = (val: boolean | null | undefined) => {
+  if (val === true) return "あり";
+  if (val === false) return "なし";
+  return "不明";
+};
+
+
+export const LocationEquipmentCard = ({ data }: LocationEquipmentCardProps) => {
   return (
     <InfoCard
       headerContent={
@@ -30,96 +36,39 @@ export const LocationEquipmentCard = ({
       useOutline={false}
     >
       <div className="text-accent py-4">
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">駐車場</span>
-          <div className="flex flex-col flex-grow">
-            <span className="break-all text-start">{data?.parking?.count ? data?.parking?.count + "台" : noDataPlaceholder}</span>
-            <span className="break-all text-start">{data?.parking?.available !== undefined ? formatBooleanCircle(data?.parking?.available) : noDataPlaceholder}</span>
+        {[
+          { label: "ゼネ車の使用可否", value: displayBoolean(data?.power_car) },
+          { label: "キッチン使用可否", value: displayBoolean(data?.kitchen) },
+          { label: "同録の可否", value: displayBoolean(data?.sound_recording_ok) },
+          { label: "養生の有無", value: displayBoolean(data?.protection) },
+          { label: "電源の有無", value: displayBoolean(data?.electric_available) },
+          { label: "駐車場の有無", value: displayBoolean(data?.has_parking) },
+          { label: "特機の使用可否", value: displayBoolean(data?.special_equipment) },
+          { label: "スモークの使用可否", value: "不明" }, // ダミー
+          { label: "火器の使用可否", value: displayBoolean(data?.fire_usage) },
+          {
+            label: "使用可能人数",
+            value: data?.capacity !== null && data?.capacity !== undefined
+              ? `${data.capacity}人`
+              : "不明",
+          },
+          {
+            label: "支払い方法",
+            value: data?.payment_method ?? "不明",
+          },
+          {
+            label: "支払い備考",
+            value: data?.remarks ?? "　",
+          },
+        ].map(({ label, value }, idx) => (
+          <div key={idx}>
+            <div className="flex items-start gap-4 px-1 py-3 text-sm">
+              <span className="font-semibold break-all w-36 shrink-0">{label}</span>
+              <span className="break-all text-start">{value}</span>
+            </div>
+            {idx !== 11 && <hr className="my-1" />}
           </div>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">エレベーター</span>
-          <span className="break-all text-start">{data?.elevator?.available !== undefined ? formatBooleanCircle(data?.elevator?.available) : noDataPlaceholder}</span>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">キッチン</span>
-          <span className="break-all text-start">{data?.kitchen?.available !== undefined ? formatBooleanCircle(data?.kitchen?.available) : noDataPlaceholder}</span>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">メイクルーム</span>
-          <div className="flex flex-col flex-grow">
-            <span className="break-all text-start">{data?.makeup_room?.available !== undefined ? formatBooleanCircle(data?.makeup_room?.available) : noDataPlaceholder}</span>
-            <span className="break-all text-start">{data?.makeup_room?.remark ? "*" + data?.makeup_room?.remark : ""}</span>
-          </div>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">養生</span>
-          <span className="break-all text-start">{data?.protection ? formatNecessary(data?.protection) : noDataPlaceholder}</span>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">電気容量</span>
-          <div className="flex flex-col flex-grow">
-            <span className="break-all text-start">{data?.electricity_capacity?.capacity ?? noDataPlaceholder}</span>
-            <span className="break-all text-start">{data?.electricity_capacity?.remark ? "*" + data?.electricity_capacity?.remark : ""}</span>
-          </div>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">電源車</span>
-          <span className="break-all text-start">{data?.power_supply !== undefined ? formatBooleanCircle(data?.power_supply) : noDataPlaceholder}</span>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">発電機</span>
-          <span className="break-all text-start">{data?.generator !== undefined ? formatBooleanCircle(data?.generator) : noDataPlaceholder}</span>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">照明外打ち</span>
-          <div className="flex flex-col flex-grow">
-            <span className="break-all text-start">{data?.lighting_outside?.available !== undefined ? formatAvailable(data?.lighting_outside?.available) : noDataPlaceholder}</span>
-            <span className="break-all text-start">{data?.lighting_outside?.remark ? "*" + data?.lighting_outside?.remark : ""}</span>
-          </div>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">同録</span>
-          <div className="flex flex-col flex-grow">
-            <span className="break-all text-start">{data?.recording?.available !== undefined ? formatAvailable(data?.recording?.available) : noDataPlaceholder}</span>
-            <span className="break-all text-start">{data?.recording?.remark ? "*" + data?.recording?.remark : ""}</span>
-          </div>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">インターネット</span>
-          <div className="flex flex-col flex-grow">
-            <span className="break-all text-start">{data?.internet?.wifi !== undefined ? formatBooleanCircle(data?.internet?.wifi) : noDataPlaceholder}</span>
-            <span className="break-all text-start">{data?.internet?.wired !== undefined ? formatBooleanCircle(data?.internet?.wired) : noDataPlaceholder}</span>
-          </div>
-        </div>
-
-        <hr className="my-4" />
-        <div className="flex items-start gap-4 px-1 text-sm">
-          <span className="font-semibold break-all w-36 shrink-0">備考</span>
-          <span className="break-all text-start">{data?.remark ?? noDataPlaceholder}</span>
-        </div>
-
-        <div className="my-4" />
+        ))}
       </div>
     </InfoCard>
   );

@@ -19,13 +19,21 @@ export const LocationPriceCard = ({
       <div className="text-accent py-4">
         <div className="flex items-start gap-4 px-1 text-sm">
           <span className="font-semibold break-all w-36 shrink-0">ムービー料金／h</span>
-          <span className="break-all text-start">{data?.price_movie_h ?? noDataPlaceholder}</span>
+          <span className="break-all text-start">
+            {data?.price_movie_h && data.price_movie_h > 0
+              ? `¥${Number(data.price_movie_h).toLocaleString()}〜`
+              : noDataPlaceholder}
+          </span>
         </div>
 
         <hr className="my-4" />
         <div className="flex items-start gap-4 px-1 text-sm">
           <span className="font-semibold break-all w-36 shrink-0">ムービー料金／day</span>
-          <span className="break-all text-start">{data?.price_movie_day ?? noDataPlaceholder}</span>
+          <span className="break-all text-start">
+            {data?.price_movie_day && data.price_movie_day > 0
+              ? `¥${Number(data.price_movie_day).toLocaleString()}〜`
+              : noDataPlaceholder}
+          </span>
         </div>
 
         <hr className="my-4" />
@@ -43,7 +51,7 @@ export const LocationPriceCard = ({
         <hr className="my-4" />
         <div className="flex items-start gap-4 px-1 text-sm">
           <span className="font-semibold break-all w-36 shrink-0">広さ（屋内）</span>
-          <span className="break-all text-start">{data?.area_sqm ?? noDataPlaceholder}</span>
+          <span className="break-all text-start">{data?.area_sqm != null ? `${data.area_sqm}㎡` : noDataPlaceholder}</span>
         </div>
 
         <hr className="my-4" />

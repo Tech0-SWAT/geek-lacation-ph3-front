@@ -18,6 +18,9 @@ type LocationBasicInfoSectionProps = {
 export const LocationBasicInfoSection = ({
   data,
 }: LocationBasicInfoSectionProps) => {
+
+  const noDataPlaceholder = "-";
+  
   return (
     <div className="max-w-7xl mx-auto flex flex-col items-start px-8 gap-8">
       {/* 上部セクション */}
@@ -91,11 +94,15 @@ export const LocationBasicInfoSection = ({
             <div className="text-accent">
               <div className="flex items-start gap-4 px-1 text-sm">
                 <div className="flex items-center gap-4 shrink-0">
-                  <CameraIcon size={20} className="inline"/>
+                  <MovieIcon size={20} className="inline"/>
                   <span className="font-semibold">ムービー／h</span>
                 </div>
                 <div className="flex flex-grow" />
-                <span className="break-all text-end">{data?.price_movie_h ?? noDataPlaceholder}</span>
+                <span className="break-all text-end">
+                  {data?.price_movie_h && data.price_movie_h > 0
+                    ? `¥${Number(data.price_movie_h).toLocaleString()}〜`
+                    : noDataPlaceholder}
+                </span>
               </div>
 
               <hr className="my-4" />
@@ -105,7 +112,11 @@ export const LocationBasicInfoSection = ({
                   <span className="font-semibold">ムービー／day</span>
                 </div>
                 <div className="flex flex-grow" />
-                <span className="break-all text-end">{data?.price_movie_day ?? noDataPlaceholder}</span>
+                <span className="break-all text-end">
+                  {data?.price_movie_day && data.price_movie_day > 0
+                    ? `¥${Number(data.price_movie_day).toLocaleString()}〜`
+                    : noDataPlaceholder}
+                </span>
               </div>
 
               <hr className="my-4" />

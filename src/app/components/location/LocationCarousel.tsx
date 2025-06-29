@@ -6,17 +6,22 @@ type LocationCarouselProps = {
   file_name?: string | null;
   title?: string | null;
   subtitle?: string | null;
-}
+  onClick?: () => void;
+};
 
 export const LocationCarousel = ({
   file_name,
   title,
   subtitle,
+  onClick, // ✅ 追加
 }: LocationCarouselProps) => {
   return (
     <div className="flex flex-col items-start w-[200px] shrink-0">
       {/* 画像枠（上下中央に配置） */}
-      <div className="bg-[#EFEFEF] w-full h-[140px] flex items-center justify-center overflow-hidden">
+      <div
+        className="bg-[#EFEFEF] w-full h-[140px] flex items-center justify-center overflow-hidden cursor-pointer"
+        onClick={onClick} 
+      >
         <SkeletonImage
           src={file_name ?? "/images/no_image.png"}
           alt="ロケーション画像"
@@ -35,27 +40,29 @@ export const LocationCarousel = ({
   );
 };
 
-
-type LocationCarouselGroup = {
+type LocationCarouselGroupProps = {
   title?: string;
-  data: LocationCarouselProps[]; // ここは実際のデータ型に合わせて調整してください
-}
+  data: LocationCarouselProps[];
+  onImageClick?: (url: string) => void;
+};
 
 export const LocationCarouselGroup = ({
   title,
   data = [],
-}: LocationCarouselGroup) => {
+  onImageClick,
+}: LocationCarouselGroupProps) => {
   return (
     <CarouselGroup title={title}>
-      {(data && data.length > 0) &&
+      {data.length > 0 &&
         data.map((item, index) => (
           <LocationCarousel
             key={index}
             file_name={item.file_name}
             title={item.title}
             subtitle={item.subtitle}
+            onClick={() => item.file_name && onImageClick?.(item.file_name)}
           />
-      ))}
+        ))}
     </CarouselGroup>
   );
-}
+};
