@@ -819,8 +819,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                     <p className="text-sm text-gray-500 mb-3">使用人数を選択してください</p>
                     <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                     <button 
-                      onClick={initializeUserCount}
-                      className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+                      disabled={true}
+                      className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
                     >
                       使用人数を選択
                     </button>
@@ -1631,11 +1631,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, onIntegrated
                   {filters.userCount === null ? (
                     /* モバイル版空状態UI */
                     <div className="text-center py-6">
-                      <p className="text-sm text-gray-500 mb-3">使用人数を選択してください</p>
+                      <p className="text-sm text-gray-500 mb-3">現在この機能は利用できません</p>
                       <div className="h-2 bg-gray-100 rounded-full mb-4"></div>
                       <button 
-                        onClick={initializeUserCount}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+                        disabled={true}
+                        className="px-4 py-2 bg-gray-300 text-gray-500 text-sm rounded-lg cursor-not-allowed"
                       >
                         使用人数を選択
                       </button>
