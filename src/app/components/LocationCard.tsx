@@ -37,11 +37,10 @@ export default function LocationCard({
   // console.log("🎯 LocationCard images:", images)
   return (
     <div
-          className="bg-white rounded-2xl shadow-md p-4 w-[360px] overflow-hidden cursor-pointer hover:shadow-lg transition"
-          onClick={handleClick}
+          className="bg-white rounded-2xl shadow-md p-4 w-[360px] overflow-hidden hover:shadow-lg transition"
         >
       {/* メイン画像 */}
-      <div className="w-full aspect-[16/9] relative overflow-hidden">
+      <div className="w-full aspect-[16/9] relative overflow-hidden cursor-pointer" onClick={handleClick}>
       
         <Image
           src={images[mainIndex]?.url || '/no-image.png'}
@@ -57,7 +56,10 @@ export default function LocationCard({
           <div
             key={i}
             className={`relative w-16 h-10 flex-shrink-0 overflow-hidden cursor-pointer `}
-            onClick={() => setMainIndex(i)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMainIndex(i);
+            }}
           >
             <Image
               src={img.url}
